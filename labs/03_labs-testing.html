@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Angular-Workshop: Unit-Testing</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-light">
+        <h1 id="angular-workshop-unit-testing">Angular-Workshop: Unit-Testing</h1>
+<ul>
+<li><a href="#angular-workshop-unit-testing">Angular-Workshop: Unit-Testing</a>
+<ul>
+<li><a href="#vorbereitung">Vorbereitung</a></li>
+<li><a href="#unit-test-f%C3%BCr-komponente">Unit-Test für Komponente</a></li>
+<li><a href="#http-zugriffe-simulieren">Http-Zugriffe simulieren</a></li>
+<li><a href="#bonus-code-coverage-analyse-">Bonus: Code Coverage Analyse *</a></li>
+<li><a href="#bonus-unit-test-mit-mocking">Bonus: Unit-Test mit Mocking</a></li>
+<li><a href="#bonus-mit-dem-template-interagieren-">Bonus: Mit dem Template interagieren **</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="vorbereitung">Vorbereitung</h2>
+<p>Falls noch vorhanden, löschen alle <code>.spec.ts</code>-Dateien. Diese Dateien enthalten die von der CLI generierten Testfälle, welche im Laufe der Schulung nicht gepflegt wurden und deswegen fehlschlagen würden.</p>
+<h2 id="unit-test-für-komponente">Unit-Test für Komponente</h2>
+<p>In dieser Übung erstellen Sie einen Unit-Test in einer neuen Datei <code>flight-search.spec.ts</code>. Dieser Unit-Test konfiguriert in <code>beforeEach</code> das Testing Module im <code>TestBed</code> und prüft anschließend, ob die <code>FlightSearchComponent</code> nach der Erzeugung (noch) keine gefundenen Flüge aufweist.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'flight-search.component'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+    beforeEach(<span class="hljs-keyword">async</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+        TestBed.configureTestingModule({
+            imports: [
+                HttpClientModule, RouterTestingModule, FlightBookingModule
+            ],
+            providers: [
+               <span class="hljs-comment">// Fügen Sie hier eventuelle Provider aus</span>
+               <span class="hljs-comment">// Ihrer app.module.ts ein (falls vorhanden)</span>
+            ]
+        }).compileComponents();
+
+    }));
+
+    it(<span class="hljs-string">'should not have any flights loaded initially'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">let</span> fixture = TestBed.createComponent(FlightSearchComponent);
+        <span class="hljs-keyword">let</span> comp = fixture.componentInstance;
+
+        expect(comp.flights.length).toBe(<span class="hljs-number">0</span>);
+    });
+
+});
+</div></code></pre>
+</p>
+</details>
+<p>Um den Test zu starten, können Sie den Befehl <code>npm test</code> verwenden.</p>
+<h2 id="http-zugriffe-simulieren">Http-Zugriffe simulieren</h2>
+<ol>
+<li>
+<p>Importieren Sie in Ihr TestBed anstatt des <code>HttpClientModule</code>s das <code>HttpClientTestingModule</code>:</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>beforeEach(<span class="hljs-keyword">async</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+    TestBed.configureTestingModule({
+        imports: [
+            HttpClientTestingModule, 
+            RouterTestingModule, 
+            FlightBookingModule
+        ],
+        [...]
+    }).compileComponents();
+
+}));
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie, ob die Methode <code>search</code> Flüge lädt. Nutzen Sie den <code>HttpTestingController</code> um eine Http-Antwort zu simulieren:</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>it(<span class="hljs-string">'should load flights when user entered from and to'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    component.from = <span class="hljs-string">'Graz'</span>;
+    component.to = <span class="hljs-string">'Hamburg'</span>;
+    component.search();
+
+    <span class="hljs-keyword">let</span> httpTestingController: HttpTestingController 
+                        = TestBed.inject(HttpTestingController);
+
+    <span class="hljs-keyword">const</span> req = httpTestingController.expectOne(<span class="hljs-string">'http://www.angular.at/api/flight?from=Graz&amp;to=Hamburg'</span>);
+    <span class="hljs-comment">// req.request.method === 'GET'</span>
+    
+    req.flush([{ id: <span class="hljs-number">22</span>, <span class="hljs-keyword">from</span>: <span class="hljs-string">'Graz'</span>, to: <span class="hljs-string">'Hamburg'</span>, date: <span class="hljs-string">''</span>}]);
+
+    expect(component.flights.length).toBe(<span class="hljs-number">1</span>);
+
+});
+
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Führen Sie Ihren Unit-Test aus (<code>npm run test</code>)</p>
+</li>
+</ol>
+<h2 id="bonus-code-coverage-analyse-">Bonus: Code Coverage Analyse *</h2>
+<ol>
+<li>
+<p>Führen Sie Ihre Tests erneut aus, um eine Code-Coverage Analyse zu machen:</p>
+<pre><code><code><div>npm test -- --code-coverage
+</div></code></code></pre>
+<p><strong>Hinweis:</strong> Die zusätzliche Angabe von <code>--</code> ist notwendig, damit npm den Parameter <code>--code-coverage</code> an das aufgerufene Skript übergibt.</p>
+</li>
+<li>
+<p>Warten Sie, bis die Tests fertig gelaufen sind.</p>
+</li>
+<li>
+<p>Betrachten Sie Ihre Test-Abdeckung in der Datei <code>coverage/html/index.html</code></p>
+</li>
+</ol>
+<h2 id="bonus-unit-test-mit-mocking">Bonus: Unit-Test mit Mocking</h2>
+<p>In dieser Übung werden Sie einen Mock für den <code>FlightService</code> erstellen und übers <code>TestBed</code> für die <code>FlightSearchComponent</code> registrieren. Anschließend werden Sie basierend darauf zwei Tests implementieren:</p>
+<ul>
+<li>
+<p>Prüfen, ob Flüge geladen werden, wenn <code>from</code> und <code>to</code> festgelegt wurde.</p>
+</li>
+<li>
+<p>Prüfen, ob <strong>keine</strong> Flüge geladen werden, wenn <code>from</code> oder <code>to</code> <strong>nicht</strong> festgelegt wurde.</p>
+</li>
+</ul>
+<p>Damit der letztere Test funktioniert, müssen Sie die Methode <code>search</code> der <code>FlightSearchComponent</code> um eine Prüfung erweitern.</p>
+<p><strong>Wichtig</strong>: Sie benötigen für diese Übung eine neue <code>.spec.ts</code>-Datei. Kopieren Sie die bestehende und nennen Sie die Kopie <code>flight-search.component2.spec.ts</code>. Löschen Sie aus Ihrer Kopie alle Unit-Tests (Aufrufe der Funktion <code>it</code>).</p>
+<p>Sie können sich dabei am folgenden Ablauf orientieren:</p>
+<ol>
+<li>
+<p>Öffnen Sie die Datei <code>flight-search.component.ts</code> und erweitern Sie die Methode <code>search</code> um eine einfache Validierung, die nachfolgend von den neuen Unit-Tests getestet wird:</p>
+<pre><code class="language-TypeScript"><div>search(): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.from || !<span class="hljs-keyword">this</span>.to) <span class="hljs-keyword">return</span>;
+    [...]
+}
+</div></code></pre>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-search.spec.ts</code> und fügen Sie am Beginn ein Mock-Objekt für den <code>FlightService</code> ein.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">let</span> result = [
+    { id: <span class="hljs-number">17</span>, <span class="hljs-keyword">from</span>: <span class="hljs-string">'Graz'</span>, to: <span class="hljs-string">'Hamburg'</span>, date: <span class="hljs-string">'now'</span>, delayed: <span class="hljs-literal">true</span>},
+    { id: <span class="hljs-number">18</span>, <span class="hljs-keyword">from</span>: <span class="hljs-string">'Vienna'</span>, to: <span class="hljs-string">'Barcelona'</span>, date: <span class="hljs-string">'now'</span>, delayed: <span class="hljs-literal">true</span> },
+    { id: <span class="hljs-number">19</span>, <span class="hljs-keyword">from</span>: <span class="hljs-string">'Frankfurt'</span>, to: <span class="hljs-string">'Salzburg'</span>, date: <span class="hljs-string">'now'</span>, delayed: <span class="hljs-literal">true</span> },
+];
+
+<span class="hljs-keyword">let</span> flightServiceMock = {
+    find(<span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>, to: <span class="hljs-built_in">string</span>): Observable&lt;Flight[]&gt; {
+        <span class="hljs-keyword">return</span> of(result);
+    },
+    <span class="hljs-comment">// Die nachfolgenden beiden Member werden nur in bestimmten</span>
+    <span class="hljs-comment">// Scenarien benötigt</span>
+    flights: [],
+    load(<span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>, to: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">void</span> {
+        <span class="hljs-keyword">this</span>.find(<span class="hljs-keyword">from</span>, to).subscribe(<span class="hljs-function"><span class="hljs-params">f</span> =&gt;</span> { <span class="hljs-keyword">this</span>.flights = f; })
+    }
+}
+
+describe(<span class="hljs-string">'flight-search.component'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> { 
+    […] 
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Erweitern Sie die <code>beforeEach</code>-Methode Ihres Tests, um festzulegen, dass für die <code>FlightSearchComponent</code> das Mock-Objekt anstatt des &quot;richtigen&quot; <code>FlightServices</code> verwendet werden soll. Nutzen Sie dazu die Methode <code>overrideComponent</code> des <code>TestBed</code>s.</p>
+<blockquote>
+<p>Falls Sie aufgrund einer Bonus-Übung einen <code>AbstractFlightService</code> als Token verwenden, müssen Sie den Mock daran binden.</p>
+</blockquote>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>describe(<span class="hljs-string">'flight-search.component'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+    beforeEach(<span class="hljs-keyword">async</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule, FlightBookingModule],
+            providers: [
+                […]
+            ]
+        })
+        .overrideComponent(FlightSearchComponent, {
+            <span class="hljs-keyword">set</span>: {
+                providers: [
+                    {
+                        provide: FlightService,
+                        useValue: flightServiceMock
+                        <span class="hljs-comment">// bzw. provide: AbstractFlightService</span>
+                        <span class="hljs-comment">// je nach ihrem Vorgehen</span>
+                    }
+                ]
+            }
+        }).compileComponents();
+
+    }));
+
+    […]
+});    
+</div></code></pre>
+ </p>
+ </details>
+<p>Da <code>flightServiceMock</code> in diesem Beispiel Objekt und keine Klasse ist, kommt nicht <code>useClass</code> sondern <code>useValue</code> zum Einsatz.</p>
+</li>
+<li>
+<p>Implementieren Sie einen Test <code>should not load flights w/o from and to</code> und einen weiteren Test <code>should not load flights w/ from and to</code>. Diese sollen das eingangs beschriebene Verhalten prüfen.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>describe(<span class="hljs-string">'flight-search.component'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+    […]
+
+    it(<span class="hljs-string">'should not load flights w/o from and to'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        component.from = <span class="hljs-string">''</span>;
+        component.to = <span class="hljs-string">''</span>;
+        component.search();
+
+        expect(component.flights.length).toBe(<span class="hljs-number">0</span>);
+
+    });
+
+    it(<span class="hljs-string">'should not load flights w/ from and to'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        component.from = <span class="hljs-string">'Hamburg'</span>;
+        component.to = <span class="hljs-string">'Graz'</span>;
+        component.search();
+
+        expect(component.flights.length).toBe(<span class="hljs-number">3</span>);
+    });
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung mit <code>npm test</code></p>
+</li>
+</ol>
+<p></p>
+<h2 id="bonus-mit-dem-template-interagieren-">Bonus: Mit dem Template interagieren **</h2>
+<p>Unit-Tests können auch mit dem Template einer Komponente interagieren. Beispielsweise könnte man auf diese Weise prüfen, ob die Schaltfläche <code>Search</code> deaktiviert (<code>disabled</code>) ist, wenn keine Suchparameter erfasst wurden. Das folgende Beispiel demonstriert dies:</p>
+<pre><code class="language-TypeScript"><div>it(<span class="hljs-string">'should have a disabled search button w/o params'</span>, fakeAsync(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+
+  <span class="hljs-comment">// Intial Databinding, ngOnInit</span>
+  fixture.detectChanges();
+  tick();
+
+  <span class="hljs-comment">// Get input field for from</span>
+  <span class="hljs-keyword">let</span> <span class="hljs-keyword">from</span> = fixture
+                .debugElement
+                .query(By.css(<span class="hljs-string">'input[name=from]'</span>))
+                .nativeElement;
+
+  <span class="hljs-keyword">from</span>.value = <span class="hljs-string">''</span>;
+  <span class="hljs-keyword">from</span>.dispatchEvent(<span class="hljs-keyword">new</span> Event(<span class="hljs-string">'input'</span>));
+
+  <span class="hljs-comment">// Get input field for to</span>
+
+  <span class="hljs-keyword">let</span> to = fixture
+             .debugElement
+             .query(By.css(<span class="hljs-string">'input[name=to]'</span>))
+             .nativeElement;
+
+  to.value = <span class="hljs-string">''</span>;
+  to.dispatchEvent(<span class="hljs-keyword">new</span> Event(<span class="hljs-string">'input'</span>));
+
+  fixture.detectChanges();
+  tick();
+
+  <span class="hljs-comment">// get disabled</span>
+  <span class="hljs-keyword">let</span> disabled = fixture
+                   .debugElement
+                   .query(By.css(<span class="hljs-string">'button'</span>))
+                   .properties[<span class="hljs-string">'disabled'</span>];
+  
+  expect(disabled).toBeTruthy();
+
+}));
+</div></code></pre>
+<p>Beachten Sie bei diesem Beispiel die folgenden Aspekte:</p>
+<ul>
+<li>
+<p>Die Datenbindung bei Angular erfolgt asynchron. Allerdings kann Angular asynchrone Aufgaben in Unit-Tests synchron ausführen. Das vereinfacht die Unit-Tests. Dazu kommt oben die Funktion <code>fakeAsync</code> zum Einsatz. Um anstehende asynchrone Aufgaben abzuarbeiten, wird zwischendurch immer wieder die Funktion <code>tick</code> aufgerufen.</p>
+</li>
+<li>
+<p>Das Beispiel setzt über das nativeElement der Eingabefelder für Suchparameter dessen Werte. Damit wird eine Benutzereingabe simuliert. Danach muss das Event <code>input</code>, das ansonsten der Browser automatisch beim Ändern von Textfeldern auslöst, manuell ausgelöst werden. Hierzu kommt <code>dispatch</code> zum Einsatz.</p>
+</li>
+</ul>
+
+    </body>
+    </html>

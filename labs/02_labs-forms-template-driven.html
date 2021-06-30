@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <title>Angular Workshop: Template Driven Forms</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body>
+        <h1 id="Angular-Workshop-Template-Driven-Forms">Angular Workshop: Template Driven Forms</h1>
+<ul>
+<li><a href="#angular-workshop-template-driven-forms">Angular Workshop: Template Driven Forms</a>
+<ul>
+<li><a href="#build-in-validatoren">Build-in Validatoren</a></li>
+<li><a href="#bonus-komponente-zum-anzeigen-von-validierungsfehlern">Bonus: Komponente zum Anzeigen von Validierungsfehlern *</a></li>
+<li><a href="#eigener-validator">Eigener Validator</a></li>
+<li><a href="#parametrisierbarer-validator">Parametrisierbarer Validator</a></li>
+<li><a href="#bonus-asynchroner-validator">Bonus: Asynchroner Validator *</a></li>
+<li><a href="#bonus-multifield-validator">Bonus: Multifield Validator *</a></li>
+<li><a href="#bonus-parametrisierbarer-multifield-validator">Bonus: Parametrisierbarer Multifield Validator **</a></li>
+<li><a href="#bonus-asynchroner-multifield-validator">Bonus: Asynchroner Multifield Validator ***</a></li>
+<li><a href="#bonus-formatiertes-datum-in-textfeld">Bonus: Formatiertes Datum in Textfeld ***</a></li>
+<li><a href="#bonus-komponente-zum-editieren-eines-datums">Bonus: Komponente zum Editieren eines Datums ***</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Build-in-Validatoren">Build-in Validatoren</h2>
+<p>In dieser Übung werden Sie die Eingaben im Suchformular der <code>FlightSearchComponent</code> mit den Build-in Validatoren <code>require</code>, <code>minlength</code>, <code>maxlength</code> und <code>pattern</code> validieren und eventuelle Validierungsfehler ausgeben.</p>
+<p>Sie können sich dabei am folgenden Ablauf orientieren:</p>
+<ol>
+<li>
+<p>Stellen Sie sicher, dass sich die Suchfelder in einem <code>form</code>-Element befinden und richten Sie für dieses Element ein Handle ein. Stellen Sie außerdem sicher, dass jedes Eingabefeld ein <code>name</code>-Attribut hat.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">form</span> #<span class="hljs-attr">form</span>=<span class="hljs-string">"ngForm"</span>&gt;</span>
+    [...]
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span> [<span class="hljs-attr">...</span>]&gt;</span>
+    [...]
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"to"</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"to"</span> [<span class="hljs-attr">...</span>]&gt;</span>
+    [...]
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Erweitern Sie das Suchfeld <code>from</code> um die oben genannten Validierungsattribute und geben Sie eventuelle Validierungsfehler aus.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span>   
+       <span class="hljs-attr">required</span>		
+       <span class="hljs-attr">minlength</span>=<span class="hljs-string">"3"</span>		
+       <span class="hljs-attr">maxlength</span>=<span class="hljs-string">"15"</span>		
+       <span class="hljs-attr">pattern</span>=<span class="hljs-string">"[a-zA-Z ]*"</span>&gt;</span>		
+
+<span class="hljs-tag">&lt;<span class="hljs-name">pre</span>&gt;</span>{{form?.controls['from']?.errors | json}}<span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span>
+
+[...]
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"text-danger"</span> 
+     *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"form?.controls['from']?.hasError('minlength')"</span>&gt;</span>		
+    ... minlength ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>		
+[...]
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung</p>
+</li>
+</ol>
+<h2 id="Bonus-Komponente-zum-Anzeigen-von-Validierungsfehlern">Bonus: Komponente zum Anzeigen von Validierungsfehlern *</h2>
+<p>Um nicht pro Eingabefeld immer und immer wieder auf dieselbe Weise die Validierungsfehler abfragen zu müssen, bietet sich der Einsatz einer zentralen Komponente an. Diese kann die Eigenschaft <code>errors</code> des validierten <code>FormControls</code> entgegennehmen. Der Ausdruck
+<code>f?.controls['from']?.errors</code> liefert zum Beispiel das nachfolgende Objekt, wenn sowohl der Validator <code>minlength</code> als auch ein eventuell selbst geschriebener <code>city</code>-Validator fehlschlägt:</p>
+<pre><code class="language-json"><div>{
+  <span class="hljs-attr">"minlength"</span>: {
+    <span class="hljs-attr">"requiredLength"</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">"actualLength"</span>: <span class="hljs-number">1</span>
+  },
+  <span class="hljs-attr">"city"</span>: <span class="hljs-literal">true</span>
+}
+</div></code></pre>
+<p>Schreiben Sie eine Komponente, die dieses <code>errors</code>-Objekt entgegennimmt (<code>@Input() errors: any;</code>) und für die darin vermerkten Fehler jeweils eine Fehlermeldung ausgibt. Um zu prüfen, ob dieses Objekt existiert und ob es auf einen bestimmten Fehler hinweist, kann *ngIf verwendet werden:</p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"errors &amp;&amp; errors['required']"</span>&gt;</span>
+    This field is required.
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"errors &amp;&amp; errors['minlength']"</span>&gt;</span>
+    This field is too short.
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<p>Diese Komponente soll sich wie folgt aufrufen lassen:</p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>From<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> 
+           <span class="hljs-attr">required</span> <span class="hljs-attr">minlength</span>=<span class="hljs-string">"3"</span>&gt;</span>
+    
+    <span class="hljs-tag">&lt;<span class="hljs-name">flight-validation-errors</span> [<span class="hljs-attr">errors</span>]=<span class="hljs-string">"form?.controls['from']?.errors"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">flight-validation-errors</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<h2 id="Eigener-Validator">Eigener Validator</h2>
+<p>In dieser Übung werden Sie einen eigenen Validator in Form einer Direktive bereitstellen. Dieser soll erfasste Städtenamen gegen eine hardcodierte Whitelist prüfen und wie folgt angewandt werden können:</p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> <span class="hljs-attr">city</span>&gt;</span>
+</div></code></pre>
+<p>Sie können sich dabei am folgenden Ablauf orientieren:</p>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <code>shared</code> einen Unterordner <code>validation</code>.</p>
+</li>
+<li>
+<p>Richten Sie im neuen Unterordner eine Direktive <code>CityValidatorDirective</code> ein und vergeben Sie den Selektor <code>[city]</code>.</p>
+</li>
+<li>
+<p>Stellen Sie sicher, dass die neue Direktive im <code>SharedModule</code> <strong>sowohl</strong> deklariert <strong>als auch</strong> exportiert wird.</p>
+</li>
+<li>
+<p>Richten Sie in der Direktive einen Multi-Provider ein, der sie an das Token <code>NG_VALIDATORS</code> bindet.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Directive</span>({
+    selector: <span class="hljs-string">'[city]'</span>,
+    providers: [{
+        provide: NG_VALIDATORS,
+        useExisting: CityValidatorDirective,
+        multi: <span class="hljs-literal">true</span>
+    }]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> CityValidatorDirective {
+    [...]
+}    
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Lassen Sie die Direktive das Interface <code>Validator</code> implementieren. Prüfen Sie in der Methode <code>validate</code> ob es sich bei der Eingabe um die Städte <code>Hamburg</code> oder <code>Graz</code> handelt. In allen anderen Fällen soll ein Fehler gemeldet werden.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Directive</span>({
+...
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> CityValidatorDirective <span class="hljs-keyword">implements</span> Validator {
+
+    validate(c: AbstractControl): ValidationErrors | <span class="hljs-literal">null</span> {
+        <span class="hljs-keyword">const</span> validCities: <span class="hljs-built_in">string</span>[] = [<span class="hljs-string">'Hamburg'</span>, <span class="hljs-string">'Graz'</span>];
+        <span class="hljs-keyword">if</span> (c.value &amp;&amp; validCities.indexOf(c.value) === <span class="hljs-number">-1</span>) {
+            <span class="hljs-keyword">return</span> {
+                city: {
+                    actualValue: c.value,
+                    validCities: validCities
+                }
+            }
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Wechseln Sie in die <code>FlightSearchComponent</code> und wenden Sie die neue Validierungsdirektive auf das Feld <code>from</code> an. Geben Sie im Fehlerfall eine Meldung aus.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span>
+       <span class="hljs-attr">required</span>		
+       <span class="hljs-attr">minlength</span>=<span class="hljs-string">"3"</span>		
+       <span class="hljs-attr">maxlength</span>=<span class="hljs-string">"15"</span>		
+       <span class="hljs-attr">pattern</span>=<span class="hljs-string">"[a-zA-Z ]*"</span>
+       <span class="hljs-attr">city</span>&gt;</span>	
+[...]
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"form?.controls['from']?.hasError('city')"</span>&gt;</span>
+    ... city ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+[...]
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+</ol>
+<h2 id="Parametrisierbarer-Validator">Parametrisierbarer Validator</h2>
+<p>In dieser Übung werden Sie den Validator aus der letzten Übung parametrisieren, sodass die Whitelist mit den gültigen Städten übergeben werden kann:</p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> [<span class="hljs-attr">city</span>]=<span class="hljs-string">"['Graz', 'Hamburg']"</span>&gt;</span>
+</div></code></pre>
+<p>Sie können dabei dem folgenden Ablauf folgen:</p>
+<ol>
+<li>
+<p>Spendieren Sie der <code>CityValidatorDirective</code> eine mit <code>@Input</code> dekorierte Eigenschaft <code>city</code> vom Typ <code>string[]</code>. Nutzen Sie diese Eigenschaft als Whitelist in der Methode <code>validate</code>.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Directive</span>({
+...
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> CityValidatorDirective <span class="hljs-keyword">implements</span> Validator {
+
+    <span class="hljs-meta">@Input</span>() city: <span class="hljs-built_in">string</span>[];
+
+    validate(c: AbstractControl): ValidationErrors | <span class="hljs-literal">null</span> {
+        <span class="hljs-keyword">if</span> (c.value &amp;&amp; <span class="hljs-keyword">this</span>.city.indexOf(c.value) === <span class="hljs-number">-1</span>) {
+            <span class="hljs-keyword">return</span> {
+                city: {
+                    actualCity: c.value,
+                    validCities: <span class="hljs-keyword">this</span>.city
+                }
+            }
+        }
+        <span class="hljs-keyword">return</span> { };
+    }
+}    
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Wechseln Sie in die Datei <code>flight-search.component.html</code> und übergeben Sie beim Aufruf der Direktive für das Suchfeld <code>from</code> eine Whitelist.</p>
+</li>
+</ol>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> [<span class="hljs-attr">city</span>]=<span class="hljs-string">"['Graz', 'Hamburg']"</span>&gt;</span>
+</div></code></pre>
+<ol start="3">
+<li>Testen Sie Ihre Lösung.</li>
+</ol>
+<h2 id="Bonus-Asynchroner-Validator">Bonus: Asynchroner Validator *</h2>
+<p>In dieser Übung werden Sie einen asynchronen Validator schreiben, der die erfasste Städtenamen gegen die von der Web API unterstützten Flughäfen prüft.</p>
+<p>Asynchrone Validatoren liefern das Validierungsergebnis zeitlich verzögert. Sie kommen z. B. zum Einsatz, wenn zur Validierung Web APIs einzubinden sind, da deren Antworten asynchron abgerufen werden.</p>
+<p>Sie können sich dabei am folgenden Ablauf orientieren:</p>
+<ol>
+<li>
+<p>Richten Sie im Ordner <code>shared/validation</code> eine Direktive <code>AsyncCityValidatorDirective</code> ein und vergeben Sie den Selektor <code>[asyncCity]</code>.</p>
+</li>
+<li>
+<p>Stellen Sie sicher, dass diese im <code>SharedModule</code> <strong>sowohl</strong> deklariert <strong>als auch</strong> exportiert wird.</p>
+</li>
+<li>
+<p>Richten Sie in der Direktive einen Provider ein, der sie an das Token <code>NG_ASYNC_VALIDATORS</code> bindet.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Directive</span>({
+    selector: <span class="hljs-string">'[asyncCity]'</span>,
+    providers: [{
+        provide: NG_ASYNC_VALIDATORS,
+        useExisting: AsyncCityValidatorDirective,
+        multi: <span class="hljs-literal">true</span>
+    }]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AsyncCityValidatorDirective {
+    [...]
+}    
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Lassen Sie sich in den Konstruktor dieser Direktive den FlightService injizieren.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Directive</span>({
+    [...]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AsyncCityValidatorDirective {
+    [...]
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> flightService: FlightService</span>) {
+    }
+    [...]
+}    
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Lassen Sie die Direktive das Interface <code>AsyncValidator</code> implementieren. Prüfen Sie in der Methode <code>validate</code> ob es in der Web API Flüge gibt, die von diesem Flughafen wegführen.</p>
+<p>Sie können dazu die Methode <code>find</code> des <code>FlightService</code> aufrufen und für den Parameter <code>from</code> die aktuelle Eingabe sowie für den Parameter <code>to</code> einen Leerstring übergeben.</p>
+<p>Mappen Sie das erhaltene Ergebnis mit der Methode <code>map</code> des Observables auf ein leeres Fehlerbeschreibungsobjekt, wenn Flüge gefunden wurden. Ansonsten mappen Sie es auf ein Objekt, dass den Fehler <code>asyncCity</code> anzeigt. Liefern Sie das von <code>map</code> erhaltene Observable zurück.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">import</span> { map, delay } <span class="hljs-keyword">from</span> <span class="hljs-string">'rxjs/operators'</span>;
+[...]
+
+<span class="hljs-meta">@Directive</span>({
+...
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AsyncCityValidatorDirective <span class="hljs-keyword">implements</span> AsyncValidator {
+    [...]
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> flightService: FlightService</span>) {
+    }
+    [...]
+
+    validate(c: AbstractControl): Observable&lt;ValidationErrors | <span class="hljs-literal">null</span>&gt; {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.flightService
+                   .find(c.value, <span class="hljs-string">''</span>).pipe(
+                        map(<span class="hljs-function"><span class="hljs-params">flights</span> =&gt;</span> (flights.length) &gt; <span class="hljs-number">0</span> ? {} : {asyncCity: <span class="hljs-literal">true</span>}),
+                        delay(<span class="hljs-number">4000</span>); <span class="hljs-comment">// &lt;-- Künstlicher Delay; Kann später entfernt werden...</span>
+                   );
+    }
+
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Wechseln Sie in die <code>FlightSearchComponent</code> und wenden Sie die neue Validierungsdirektive auf das Feld <code>from</code> an. Geben Sie im Fehlerfall eine Meldung aus.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span>
+       <span class="hljs-attr">required</span>		
+       <span class="hljs-attr">minlength</span>=<span class="hljs-string">"3"</span>		
+       <span class="hljs-attr">maxlength</span>=<span class="hljs-string">"15"</span>		
+       <span class="hljs-attr">pattern</span>=<span class="hljs-string">"[a-zA-Z ]*"</span>
+       <span class="hljs-attr">asyncCity</span>
+       <span class="hljs-attr">city</span>&gt;</span>	
+[...]
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"form?.controls['from']?.hasError('asyncCity')"</span>&gt;</span>
+    ... asyncCity ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+[...]
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Prüfen Sie auch mit der Eigenschaft <code>pending</code> des <code>FormControls</code> ob noch asynchrone Validierungen anstehen.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"form?.controls['from']?.pending"</span>&gt;</span>
+    ... Executing Async Validator ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+[...]
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung. <strong>Beachten Sie dabei</strong>, dass Angular asynchrone Validatoren erst ausführt, wenn keiner der synchronen Validatoren einen Fehler meldet. Tragen Sie bspw. <code>Rom</code> in die Whiteliste des synchronen Validators ein. Wenn Sie nun nach <code>Rom</code> suchen, werden alle synchronen Validatoren diesen Wert korrekt validieren und der neue asynchrone Validator wird einen Fehler liefern, da <code>Rom</code> in der Datenbank nicht eingetragen ist.</p>
+</li>
+</ol>
+<h2 id="Bonus-Multifield-Validator">Bonus: Multifield Validator *</h2>
+<p>Sie können auch Validatoren schaffen, die auf ein Formular angewandt werden und mehrere Felder berücksichtigen. Nutzen Sie die nachfolgenden Informationen dazu, um einen Validator, der Rundflüge verbietet (z. B. Flüge von Frankfurt nach Frankfurt) zu schreiben.
+ 
+Hierzu muss der Selektor das gesamte Formular adressieren:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Directive</span>({ 
+    selector: <span class="hljs-string">'form[roundTrip]'</span>,
+    providers: [...]
+})
+[...]
+</div></code></pre>
+<p>Die <code>validate</code>-Methode kann in diesem Fall das übergebene <code>AbstractControl</code> in eine <code>FormGroup</code> umwandeln:</p>
+<pre><code class="language-TypeScript"><div>validate(c: AbstractControl): object {
+
+    <span class="hljs-keyword">let</span> group: FormGroup = c <span class="hljs-keyword">as</span> FormGroup; <span class="hljs-comment">// Typumwandlung</span>
+
+    <span class="hljs-keyword">let</span> fromCtrl = group.controls[<span class="hljs-string">'from'</span>];
+    <span class="hljs-keyword">let</span> toCtrl = group.controls[<span class="hljs-string">'to'</span>];
+
+    <span class="hljs-keyword">if</span> (!fromCtrl || !toCtrl) <span class="hljs-keyword">return</span> { };
+
+    […]
+}
+</div></code></pre>
+<p>Danach kann man auf die einzelnen Controls zugreifen. In diesem Beispiel sind die Namen der Controls hartcodiert. Allerdings könnte man diese auch, wie in einer der letzten Übungen, per Datenbindung übergeben.</p>
+<p>Mit diesen Controls kann eine Validierung durchgeführt werden:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">if</span> (fromCtrl.value === toCtrl.value) {
+    <span class="hljs-keyword">return</span> {
+        roundTrip: <span class="hljs-literal">true</span>
+    }
+}
+
+<span class="hljs-keyword">return</span> { }
+</div></code></pre>
+<p>Nach dem <strong>Registrieren und Exportieren</strong> beim <code>SharedModule</code>, kann die Validierungs-Direktive beim jeweiligen <code>from</code>-Element eingesetzt werden:</p>
+<pre><code class="language-html"><div><span class="hljs-tag">&lt;<span class="hljs-name">form</span> #<span class="hljs-attr">form</span>=<span class="hljs-string">"ngForm"</span> <span class="hljs-attr">roundTrip</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"form?.hasError('roundTrip')"</span>&gt;</span>...roundTrip...<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    [...]
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</div></code></pre>
+<h2 id="Bonus-Parametrisierbarer-Multifield-Validator">Bonus: Parametrisierbarer Multifield Validator **</h2>
+<p>Der Validator im letzten Beispiel greift hardcodiert auf die Felder <code>from</code> und <code>to</code> zu. Schaffen Sie eine Möglichkeit, diese Informationen per Datenbindung zu übergeben. Nutzen Sie dazu Eigenschaften mit dem Dekorator <code>@Input</code>.</p>
+<h2 id="Bonus-Asynchroner-Multifield-Validator">Bonus: Asynchroner Multifield Validator ***</h2>
+<p>Kombinieren Sie die Informationen aus den letzten Übungen, um einen asynchronen Multifield Validator zu schreiben. Dieser soll prüfen, ob es Flüge gibt, die von <code>from</code> nach <code>to</code> führen.</p>
+<h2 id="Bonus-Formatiertes-Datum-in-Textfeld">Bonus: Formatiertes Datum in Textfeld ***</h2>
+<p>Schreiben Sie eine Direktive mit deren Hilfe das Geburtsdatum eines Passagiers als formatiertes Datum in einem Textfeld dargestellt und editiert werden kann. Infos dazu finden Sie im Blog des Trainers unter <a href="https://www.softwarearchitekt.at/post/2016/01/11/parser-und-formatter-in-angular-2.aspx">https://www.softwarearchitekt.at/post/2016/01/11/parser-und-formatter-in-angular-2.aspx</a>.</p>
+<h2 id="Bonus-Komponente-zum-Editieren-eines-Datums">Bonus: Komponente zum Editieren eines Datums ***</h2>
+<p>Schreiben Sie eine Komponente zum Editieren des Geburtsdatums eines Passagiers. Damit diese Komponente mit dem Forms-Handling von Angular zusammenspielt, müssen Sie das Interface ControlValueAccessor implementieren. Informationen dazu finden Sie im Blog des Trainers unter <a href="https://www.softwarearchitekt.at/post/2016/06/10/eigene-formular-steuerelemente-fur-angular-2-schreiben.aspx">https://www.softwarearchitekt.at/post/2016/06/10/eigene-formular-steuerelemente-fur-angular-2-schreiben.aspx</a></p>
+
+    </body>
+    </html>

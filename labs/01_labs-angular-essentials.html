@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Angular Workshop: Übungsblatt</title>
+        <style>
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+
+        <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+
+    </head>
+    <body class="vscode-light">
+        <h1 id="angular-workshop-übungsblatt">Angular Workshop: Übungsblatt</h1>
+<ul>
+<li><a href="#angular-workshop-%C3%BCbungsblatt">Angular Workshop: Übungsblatt</a>
+<ul>
+<li><a href="#ihre-erste-angular-komponente">Ihre erste Angular-Komponente</a>
+<ul>
+<li><a href="#komponente-zum-suchen-nach-fl%C3%BCgen">Komponente zum Suchen nach Flügen</a></li>
+<li><a href="#den-debugger-verwenden">Den Debugger verwenden</a></li>
+<li><a href="#bonus-fl%C3%BCge-editieren-">Bonus: Flüge editieren *</a></li>
+</ul>
+</li>
+<li><a href="#bonus-passagiere-suchen-und-editieren-">Bonus: Passagiere suchen und editieren **</a></li>
+<li><a href="#eigenen-services-erstellen">Eigenen Services erstellen</a>
+<ul>
+<li><a href="#flightservice">FlightService</a></li>
+<li><a href="#bonus-alternative-implementierung-">Bonus: Alternative Implementierung *</a></li>
+<li><a href="#bonus-usefactory-">Bonus: useFactory **</a></li>
+</ul>
+</li>
+<li><a href="#eigene-pipe-erstellen">Eigene Pipe erstellen</a></li>
+<li><a href="#module">Module</a></li>
+<li><a href="#bonusaufgaben-zu-pipes">Bonusaufgaben zu Pipes</a>
+<ul>
+<li><a href="#bonus-statuscolorpipe-">Bonus: StatusColorPipe *</a></li>
+<li><a href="#bonus-statusfilterpipe-">Bonus: StatusFilterPipe *</a></li>
+<li><a href="#bonus-service-f%C3%BCr-pipe-">Bonus: Service für Pipe *</a></li>
+<li><a href="#bonus-asynchroner-service-f%C3%BCr-pipe-">Bonus: Asynchroner Service für Pipe **</a></li>
+</ul>
+</li>
+<li><a href="#komponenten">Komponenten</a>
+<ul>
+<li><a href="#flightcardcomponent">FlightCardComponent</a></li>
+<li><a href="#bonus-flightstatustogglecomponent-">Bonus: FlightStatusToggleComponent **</a></li>
+<li><a href="#bonus-content-projection-">Bonus: Content Projection **</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="ihre-erste-angular-komponente">Ihre erste Angular-Komponente</h2>
+<h3 id="komponente-zum-suchen-nach-flügen">Komponente zum Suchen nach Flügen</h3>
+<p>In diesem Teil der Übung werden Sie die präsentierte <em>FlightSearchComponent</em> implementieren. Sie können dazu den nachfolgenden Anweisungen schrittweise folgen oder lediglich bei Bedarf nachschlagen.</p>
+<ol>
+<li>
+<p>Erzeugen Sie im Ordner <em>src/app</em> einen Ordner <em>entities</em>.</p>
+</li>
+<li>
+<p>Erzeugen Sie im neuen Ordner <em>entities</em> eine Datei <em>flight.ts</em>:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> Flight {
+  id: <span class="hljs-built_in">number</span>;
+  <span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>;
+  to: <span class="hljs-built_in">string</span>;
+  date: <span class="hljs-built_in">string</span>;
+  delayed: <span class="hljs-built_in">boolean</span>;
+}
+</div></code></pre>
+</li>
+<li>
+<p>Erzeugen Sie im Ordner <em>src/app</em> eine <em>FlightSearchComponent</em></p>
+<p><strong>Wichtig:</strong> Es existieren mehrere Möglichkeiten zum Genieren von Komponenten:</p>
+<ul>
+<li>
+<p><strong>Visual Studio Code:</strong> Wenn Sie die oben erwähnten Plugins installiert haben, finden Sie im Kontextmenü Ihrer Ordner einen Befehl <code>Angular: Generate a Component</code>.</p>
+</li>
+<li>
+<p><strong>WebStorm/IntelliJ</strong>: Hier finden Sie im Kontextmenü Ihrer Ordner einen Befehl <code>Angular Schematics</code>.</p>
+</li>
+<li>
+<p><strong>Kommandozeile</strong>: Mit der CLI können Sie auf der Kommandozeile Komponenten erzeugen. Wechseln Sie dazu ins Root Ihres Projektes und geben Sie den folgenden Befehl ein:</p>
+<pre><code><code><div>ng generate component flight-search
+</div></code></code></pre>
+<p>Die Kurzform hierfür lautet:</p>
+<pre><code><code><div>ng g c flight-search
+</div></code></code></pre>
+<p>Mit dem Schalter --help erhält man Informationen zu allen Optionen:</p>
+<pre><code><code><div>ng g --help
+ng g c --help
+</div></code></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-search.component.ts</em> und vergeben Sie den Selektor <em>flight-search</em>:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'flight-search'</span>,
+  templateUrl: <span class="hljs-string">'./flight-search.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightSearchComponent <span class="hljs-keyword">implements</span> OnInit {
+  […]
+}
+</div></code></pre>
+</li>
+<li>
+<p>Spendieren Sie der Klasse <em>FlightSearchComponent</em> die folgenden Member:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'flight-search'</span>,
+  templateUrl: <span class="hljs-string">'./flight-search.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightSearchComponent <span class="hljs-keyword">implements</span> OnInit {
+
+  <span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>;
+  to: <span class="hljs-built_in">string</span>;
+  flights: <span class="hljs-built_in">Array</span>&lt;Flight&gt; = [];
+  selectedFlight: Flight;
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> http: HttpClient</span>) {
+  }
+
+  ngOnInit() { }
+
+  search(): <span class="hljs-built_in">void</span> {
+    <span class="hljs-comment">// Implementierung wird gleich ergänzt</span>
+  }
+
+  select(f: Flight): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.selectedFlight = f;
+  }
+}
+</div></code></pre>
+</li>
+<li>
+<p>Implementieren Sie die Methode <em>search</em>, sodass sie anhand der Parameter <em>from</em> und <em>to</em> mit dem injizierten <code>HttpClient</code> nach Flügen sucht und das Ergebnis in <code>flights</code> ablegt.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>search(): <span class="hljs-built_in">void</span> {
+
+  <span class="hljs-keyword">let</span> url = <span class="hljs-string">'http://www.angular.at/api/flight'</span>;
+
+  <span class="hljs-keyword">let</span> headers = <span class="hljs-keyword">new</span> HttpHeaders()
+      .set(<span class="hljs-string">'Accept'</span>, <span class="hljs-string">'application/json'</span>);
+
+  <span class="hljs-keyword">let</span> params = <span class="hljs-keyword">new</span> HttpParams()
+      .set(<span class="hljs-string">'from'</span>, <span class="hljs-keyword">this</span>.from)
+      .set(<span class="hljs-string">'to'</span>, <span class="hljs-keyword">this</span>.to);
+
+  <span class="hljs-keyword">this</span>.http
+  .get&lt;Flight[]&gt;(url, {headers, params})
+  .subscribe({
+    next: <span class="hljs-function">(<span class="hljs-params">flights: Flight[]</span>) =&gt;</span> {
+      <span class="hljs-keyword">this</span>.flights = flights;
+    },
+    error: <span class="hljs-function">(<span class="hljs-params">errResp</span>) =&gt;</span> {
+      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error loading flights'</span>, errResp);
+    }
+  });
+}
+</div></code></pre>
+</li>
+</ol>
+ </p>
+ </details>
+<ol start="6">
+<li>
+<p>Wechseln Sie in die Datei <code>flight-search.component.html</code>, welche das dazugehörige Template repräsentiert und fügen Sie einen Abschnitt mit einem Suchformular ein. Sie können dazu das folgende HTML, das Sie jedoch <strong>noch um Datenbindungsausdrücke</strong> erweitern müssen, verwenden:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"header"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"title"</span>&gt;</span>Flight Search<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>From:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>To:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"to"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span>
+        <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-default"</span>&gt;</span>Search<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<p>Stellen Sie auch sicher, dass die Schaltfläche nur zur Verfügung steht, wenn <code>from</code> und <code>to</code> einen Wert aufweisen.</p>
+ <details>
+ <summary>Code inkl. Datenbindungsausdrücken anzeigen</summary>
+ <p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"header"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"title"</span>&gt;</span>Flight Search<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>From:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"from"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>To:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"to"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"to"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span>
+    [<span class="hljs-attr">disabled</span>]=<span class="hljs-string">"!to || !from"</span>
+    (<span class="hljs-attr">click</span>)=<span class="hljs-string">"search()"</span>
+    <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-default"</span>&gt;</span>Search<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Ergänzen Sie am Ende des Templates einen weiteren Abschnitt, der die gefundenen Flüge in einer Tabelle auflistet. Sie können dazu das folgende HTML-Fragment, das Sie <strong>jedoch noch um Datenbindungsausdrücke erweitern müssen</strong> verwenden:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">table</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"table table-contensed"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">thead</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Id<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>From<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>To<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Date<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">thead</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>...<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span>&gt;</span>Select<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">table</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+<p>Die ausgewählte Zeile soll mit der Klasse <code>active</code> hervorgehoben werden. Wurden keine Flüge gefunden, soll die Tabelle nicht angezeigt werden.</p>
+ <details>
+ <summary>Code inkl. Datenbindungsausdrücke anzeigen</summary>
+ <p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">table</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"table table-contensed"</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"flights.length &gt; 0"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">thead</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Id<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>From<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>To<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Date<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">thead</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">tr</span> *<span class="hljs-attr">ngFor</span>=<span class="hljs-string">"let f of flights"</span>
+    [<span class="hljs-attr">class.active</span>]=<span class="hljs-string">"f === selectedFlight"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>{{f.id}}<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>{{f.from }}<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>{{f.to }}<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>{{f.date | date:'dd.MM.yyyy HH:mm'}}<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"select(f)"</span>&gt;</span>Select<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">table</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Fügen Sie einen dritten Abschnitt zum Template hinzu. Dieser soll den selektierten Flug präsentieren:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- {{title}} --&gt;</span> <span class="hljs-comment">&lt;!-- Alte Zeile  --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">pre</span>&gt;</span>{{ selectedFlight | json }}<span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span> <span class="hljs-comment">&lt;!-- neue Zeile --&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>app.module.ts</em> und vergewissern Sie sich, dass die neue <em>FlightSearchComponent</em> unter <em>declarations</em> registriert wird.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule
+  ],
+  declarations: [
+    AppComponent,
+    FlightSearchComponent,
+    […] <span class="hljs-comment">// keep the rest here</span>
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Wechseln Sie in die Datei <em>app.component.html</em>, um dort die neue Komponente aufzurufen:</p>
+<pre><code class="language-HTML"><div>[…]
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">flight-search</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">flight-search</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+[…]
+</div></code></pre>
+</li>
+<li>
+<p>Prüfen Sie, ob Kompilierungsfehler auf der Konsole angezeigt werden.</p>
+</li>
+<li>
+<p>Starten Sie die Lösung wie weiter oben im Rahmen der Einführung gezeigt (<code>npm start</code>) und testen Sie sie im Browser, indem Sie nach Flügen von <code>Graz</code> nach <code>Hamburg</code> suchen. Eine Liste mit weiteren möglichen Städten finden Sie <a href="http://angular.at/api/airport">hier</a>.</p>
+</li>
+</ol>
+<h3 id="den-debugger-verwenden">Den Debugger verwenden</h3>
+<ol>
+<li>
+<p>Öffnen Sie in Chrome die Developer-Tools (F12).</p>
+</li>
+<li>
+<p>Wechseln Sie in das Registerblatt Source und schließen Sie dort alle Dateien.</p>
+</li>
+<li>
+<p>Drücken Sie STRG+P und tippen Sie den Namen <em>flight-search.component</em> ein.</p>
+</li>
+<li>
+<p>Erstellen Sie am Beginn Ihrer <em>search</em>-Methode einen Breakpoint.</p>
+</li>
+<li>
+<p>Suchen Sie nach Flügen und stellen Sie fest, dass der Browser die Ausführung beim Breakpoint anhält.</p>
+</li>
+<li>
+<p>Betrachten Sie die Informationen, die der Debugger zu den einzelnen Variablen liefert. Diese werden beim Mouse-Over angezeigt und gehen Sie Schritt für Schritt durch Ihre Methode durch.</p>
+</li>
+</ol>
+<h3 id="bonus-flüge-editieren-">Bonus: Flüge editieren *</h3>
+<p>Schaffen Sie die Möglichkeit, den ausgewählten Flug zu editieren. Dazu soll nach dem Auswählen unter der Tabelle ein Formular präsentiert werden.</p>
+<p>Gehen Sie dazu wie folgt vor:</p>
+<ol>
+<li>
+<p>Führen Sie in Ihrer Komponente eine Eigenschaft <em>message</em> ein, über die Sie später den Benutzer über den Erfolg oder Misserfolg der Speichern-Operation informieren.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'flight-search'</span>,
+  templateUrl: <span class="hljs-string">'./flight-search.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightSearchComponent {
+
+  message: <span class="hljs-built_in">string</span>;
+
+  [...]
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Erweitern Sie Ihre <strong>bestehende</strong> Komponente um eine Methode zum Speichern des ausgewählten Fluges. Diese soll mit dem <code>HttpClient</code> die Eigenschaft <em>selectedFlight</em> per POST zum Server senden. Dazu weist der HttpClient eine Methode <code>post</code> auf:</p>
+<pre><code class="language-TypeScript"><div>  <span class="hljs-keyword">this</span>.http
+  .post&lt;Flight&gt;(url, <span class="hljs-keyword">this</span>.selectedFlight, { headers })
+  .subscribe( ... );
+</div></code></pre>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>save(): <span class="hljs-built_in">void</span> {
+
+  <span class="hljs-keyword">const</span> url = <span class="hljs-string">'http://www.angular.at/api/flight'</span>;
+
+  <span class="hljs-keyword">const</span> headers = <span class="hljs-keyword">new</span> HttpHeaders()
+          .set(<span class="hljs-string">'Accept'</span>, <span class="hljs-string">'application/json'</span>);
+
+  <span class="hljs-keyword">this</span>.http
+  .post&lt;Flight&gt;(url, <span class="hljs-keyword">this</span>.selectedFlight, { headers })
+  .subscribe({
+    next: <span class="hljs-function"><span class="hljs-params">flight</span> =&gt;</span> {
+      <span class="hljs-keyword">this</span>.selectedFlight = flight;
+      <span class="hljs-keyword">this</span>.message = <span class="hljs-string">'Success!'</span>;
+    },
+    error: <span class="hljs-function"><span class="hljs-params">errResponse</span> =&gt;</span> {
+      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error'</span>, errResponse);
+      <span class="hljs-keyword">this</span>.message = <span class="hljs-string">'Error: '</span>;
+    }
+  });
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Schaffen Sie im Template die Möglichkeit, den <em>selectedFlight</em> zu editieren. Um Null-Zugriffe zu vermeiden, sollten Sie mit <em>*ngIf</em> prüfen, ob es einen selektierten Flug gibt. Sie können dazu das folgende HTML-Fragment, das Sie noch um Datenbindungsausdrücke erweitern müssen, verwenden:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"selectedFlight"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+  {{ message }}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>Id<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>From<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Ergänzen Sie hier analog Felder für die weiteren Eigenschaften des Fluges --&gt;</span>
+
+  […]
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-default"</span>&gt;</span>Save<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+ <details>
+ <summary>Code inkl. Datenbindungsausdrücke anzeigen</summary>
+ <p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"selectedFlight"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+  {{ message }}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>Id<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"selectedFlight.id"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>From<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"selectedFlight.from"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Ergänzen Sie hier analog Felder für die weiteren Eigenschaften des Fluges --&gt;</span>
+
+  […]
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"save()"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-default"</span>&gt;</span>Save<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Führen Sie die Anwendung aus und testen Sie sie. Beachten Sie, dass Sie die Datensätze mit den Ids 1 bis 5 nicht editieren können, damit diese Datensätze in jeder Demo zur Verfügung stehen. Um einen neuen Flug zu erzeugen, können Sie die Id 0 vergeben. Nach dem Speichern am Server wird diese durch die nächste freie Id ersetzt.</p>
+</li>
+</ol>
+<h2 id="bonus-passagiere-suchen-und-editieren-">Bonus: Passagiere suchen und editieren **</h2>
+<p>Sie finden unter <a href="http://www.angular.at/api/passenger">http://www.angular.at/api/passenger</a> eine weitere Web API, die als Ergänzung zu Flügen Passagiere anbietet. Infos über die unterstützen Verben und Datenstrukturen finden Sie unter <a href="http://www.angular.at/help">http://www.angular.at/help</a>. Beachten Sie bitte folgende Aspekte:</p>
+<ul>
+<li>Als Suchparameter für Passagiere bietet sich <code>name</code> (= Familienname) und <code>firstName</code> an. Ersterer ist Pflicht, zweiterer ist optional: <a href="http://www.angular.at/api/passenger?name=Muster">http://www.angular.at/api/passenger?name=Muster</a></li>
+<li>Mit POST können Sie Passagiere einfügen, wenn Sie die Id 0 vergeben.</li>
+<li>Mit POST können Sie auch einen Passagier editieren, wenn Sie dessen Id angeben.</li>
+<li>Die Passagiere mit den Ids 1 bis 5 können nicht gespeichert werden (sie sind Demos und Präsentationen vorbehalten).</li>
+<li>Während für XML Pascal-Case (z. B. <em>PassagierStatus</em>) zum Einsatz kommt, verwendet die JSON-repräsentation das unter JavaScript übliche Camel-Case (z. B. <em>passagierStatus</em>). Damit wird den Gepflogenheiten der beiden Standards Rechnung getragen.</li>
+</ul>
+<p>Sie können nun Ihre Anwendung auch erweitern, sodass man Passagiere suchen und editieren kann.</p>
+<p>Falls Sie diese Erweiterung implementieren, können Sie sie in allen weiteren Übungen auch analog zur beschriebenen Funktionalität rund um Flüge erweitern.</p>
+<p><strong>Tipp:</strong> Rufen Sie Ihre Passagier-Komponente vorerst einfach in der Datei <code>app.component.html</code> unterhalb von <code>flight-search</code> auf. Suchen Sie zum Testen nach Max Muster (firstname: Max, name: Muster).</p>
+<h2 id="eigenen-services-erstellen">Eigenen Services erstellen</h2>
+<h3 id="flightservice">FlightService</h3>
+<p>In dieser Übung werden Sie einen <code>FlugService</code>, der die Kommunikation mit der Flug API via HTTP übernimmt, entwickeln und innerhalb Ihrer Komponente verwenden:</p>
+<pre><code><code><div>[FlightSearchComponent] --&gt; [FlightService]
+</div></code></code></pre>
+<p>Sie können dazu den nachfolgenden Punkten folgen oder nur bei Bedarf nachschlagen.</p>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <em>flight-search</em> einen Service. Die Datei dieses Services soll <em>flight.service.ts</em> heißen.</p>
+</li>
+<li>
+<p>Implementieren Sie in dieser Datei einen <em>FlightService</em>, der die von der Anwendung benötigten Flüge abruft. Dieser muss sich zum Verrichten seiner Aufgabe den <em>HttpClient</em> injizieren lassen.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Injectable</span>({ providedIn: <span class="hljs-string">'root'</span> })
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightService {
+
+<span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> http: HttpClient</span>) {
+}
+
+  find(<span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>, to: <span class="hljs-built_in">string</span>): Observable&lt;Flight[]&gt; {
+  <span class="hljs-keyword">let</span> url = <span class="hljs-string">'http://www.angular.at/api/flight'</span>;
+
+  <span class="hljs-keyword">let</span> headers = <span class="hljs-keyword">new</span> HttpHeaders()
+        .set(<span class="hljs-string">'Accept'</span>, <span class="hljs-string">'application/json'</span>);
+
+  <span class="hljs-keyword">let</span> params = <span class="hljs-keyword">new</span> HttpParams()
+        .set(<span class="hljs-string">'from'</span>, <span class="hljs-keyword">from</span>)
+        .set(<span class="hljs-string">'to'</span>, to);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.http.get&lt;Flight[]&gt;(url, {headers, params});
+  }
+
+}
+</div></code></pre>
+ </p>
+ </details>
+<p>Falls Sie die Bonus-Aufgabe <em>Flüge editieren</em> weiter oben gemacht haben, müssen Sie nun auch die Methode <em>save</em> in den Service auslagern.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>save(flight: Flight): Observable&lt;Flight&gt; {
+  <span class="hljs-keyword">let</span> url = <span class="hljs-string">'http://www.angular.at/api/flight'</span>;
+
+  <span class="hljs-keyword">let</span> headers = <span class="hljs-keyword">new</span> HttpHeaders()
+      .set(<span class="hljs-string">'Accept'</span>, <span class="hljs-string">'application/json'</span>);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.http.post&lt;Flight&gt;(url, flight, { headers });
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-search.component.ts</em> und lassen Sie sich den neuen Service in den Konstruktor injizieren.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>[…]
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightSearchComponent {
+  […]
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> flightService: FlightService</span>) { }
+  […]
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Nutzen Sie den injizierten <em>FlightService</em> in der Methode <em>search</em> zum Suchen nach Flügen.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>search(): <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">this</span>.flightService
+  .find(<span class="hljs-keyword">this</span>.from, <span class="hljs-keyword">this</span>.to)
+  .subscribe({
+    next: <span class="hljs-function">(<span class="hljs-params">flights</span>) =&gt;</span> {
+      <span class="hljs-keyword">this</span>.flights = flights;
+    },
+    error:  <span class="hljs-function">(<span class="hljs-params">errResp</span>) =&gt;</span> {
+      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error loading flights'</span>, errResp);
+    }
+  });
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung im Browser.</p>
+</li>
+<li>
+<p>Stellen Sie mit dem Debugger sicher, dass zunächst der <em>FlightService</em> den <em>HttpClient</em> injiziert bekommt und dann die Komponente den <em>FlightService</em> auf diese selbe Weise erhält.</p>
+</li>
+</ol>
+<!--
+### Bonus: Augury *
+
+1. Installieren Sie das Chrome-Plugin Augury (``augury.angular.io``).
+
+1. Registrieren Sie Ihren Service global (im _AppModule_) und nutzen Sie ihn in Ihrer Komponente.
+
+2. Laden Sie Ihre Anwendung und wechseln Sie in den Dev-Tools (F12) auf das neue Registerblatt Augury.
+
+1. Markieren Sie die _FlightSearchComponent_ und wechseln Sie in das Registerblatt _Injector Graph_.
+
+1. Dort sollten Sie nun in einer graphischen Übersicht sehen, wo Ihr Service registriert wird und dass er in die _FlightSearchComponent_ injiziert wird.
+
+-->
+<h3 id="bonus-alternative-implementierung-">Bonus: Alternative Implementierung *</h3>
+<ol>
+<li>
+<p>Erzeugen Sie im Ordner <em>flight-search</em> einen <code>AbstractFlightService</code>:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> AbstractFlightService {
+  <span class="hljs-keyword">abstract</span> find(<span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>, to:<span class="hljs-built_in">string</span>): Observable&lt;Flight[]&gt;;
+}
+</div></code></pre>
+</li>
+<li>
+<p>Wechseln Sie in die Datei <em>flight.service.ts</em> und lassen Sie <em>FlightService</em> die Klasse <em>AbstractFlightService</em> implementieren:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Injectable</span>({ [...] })
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightService <span class="hljs-keyword">implements</span> AbstractFlightService {
+  […]
+}
+</div></code></pre>
+<p>Das Schlüsselwort <em>implements</em> gibt an, dass der <em>FlightService</em> sämtliche Methoden des <em>AbstractFlightServices</em> implementieren muss. Im Gegensatz zum Schlüsselwort <em>extends</em> findet jedoch keine Vererbung statt.</p>
+</li>
+<li>
+<p>Wechseln Sie in die Datei app.module.ts und erzeugen Sie einen Provider für den AbstractFlightService:</p>
+<pre><code class="language-typescript"><div><span class="hljs-meta">@NgModule</span>({
+  [...],
+  providers: [
+      {
+        provide: AbstractFlightService,
+        useClass: FlightService
+      }
+  ],
+  [...]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+</li>
+<li>
+<p>Fordern Sie per Dependency Injection in Ihrer Komponente eine Instanz von <em>AbstractFlightService</em> *<em>anstatt</em> einer Instanz von <em>FlightService</em> an:</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> flightServie: AbstractFlightService</span>) { […] }
+</div></code></pre>
+ </p>
+ </details>
+ <br>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+<li>
+<p>Erstellen Sie im Ordner <em>flight-search</em> eine Datei <em>dummy-flight.service.ts</em>.</p>
+</li>
+<li>
+<p>Stellen Sie in dieser Datei eine alternative Implementierung von <em>AbstractFlightService</em> zur Verfügung. Diese soll sich <em>DummyFlightService</em> nennen und ein paar hartcodierte Flüge zum Testen zurück liefern:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">import</span> { of } <span class="hljs-keyword">from</span> <span class="hljs-string">'rxjs'</span>;
+[…]
+
+<span class="hljs-meta">@Injectable</span>()
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DummyFlightService <span class="hljs-keyword">implements</span> AbstractFlightService {
+
+  find(<span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>, to: <span class="hljs-built_in">string</span>): Observable&lt;Flight[]&gt; {
+
+  <span class="hljs-keyword">return</span> of([{id: <span class="hljs-number">17</span>, <span class="hljs-keyword">from</span>: <span class="hljs-string">'Graz'</span>, to: <span class="hljs-string">'Hamburg'</span>, date: <span class="hljs-string">'2022-01-01'</span>, delayed: <span class="hljs-literal">true</span>}]);
+
+  }
+}
+</div></code></pre>
+<p>Die hier gezeigte Funktion <em>of</em> erzeugt ein Observable, das das übergebene Array mit Flügen zurückliefert.</p>
+</li>
+<li>
+<p>Lassen Sie nun Ihren <code>AbstractFlightService</code> auf den neuen <code>DummyFlightService</code> verweisen.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div><span class="hljs-meta">@NgModule</span>({
+  [...],
+  providers: [
+      {
+        provide: AbstractFlightService,
+        useClass: DummyFlightService
+      }
+  ],
+  [...]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+ </p>
+ </details>
+ <br>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung und vergewissern sie sich, dass der neue <em>DummyFlightService</em> zum Einsatz kommt.</p>
+</li>
+<li>
+<p>Stellen Sie die Serviceregistrierung wieder um, sodass Sie allen Konsumenten, die den <em>AbstractFlightService</em> verlangen, den ursprünglichen <em>FlightService</em> zukommen lässt:</p>
+<pre><code class="language-typescript"><div><span class="hljs-meta">@NgModule</span>({
+  [...],
+  providers: [
+      {
+        provide: AbstractFlightService,
+        useClass: FlightService
+      }
+  ],
+  [...]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+</li>
+</ol>
+<h3 id="bonus-usefactory-">Bonus: useFactory **</h3>
+<p>Mit <code>useFactory</code> können Sie eine Factory-Funktion, die angibt, wie Ihr Service zu erzeugen ist, angeben:</p>
+<pre><code class="language-typescript"><div><span class="hljs-meta">@NgModule</span>({
+  [...],
+  providers: [
+      {
+        provide: AbstractFlightService,
+        useFactory: <span class="hljs-function">(<span class="hljs-params">http: HttpClient</span>) =&gt;</span> <span class="hljs-keyword">new</span> FlightService(http),
+        deps: [HttpClient]
+      }
+  ],
+  [...]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+<p>Erstellen Sie in dieser Datei eine Konstante <code>DEBUG</code>, welche entweder <code>true</code> oder <code>false</code> sein kann. Ändern Sie die Factory ab, sodass sie in Abhängigkeit von <code>DEBUG</code> den <code>FlightService</code> (<code>DEBUG===false</code>) oder den <code>DummyFlightService</code> (<code>DEBUG===true</code>) zurückliefert.</p>
+<h2 id="eigene-pipe-erstellen">Eigene Pipe erstellen</h2>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <em>src/app</em> die Unterordner <em>shared/pipes</em>.</p>
+</li>
+<li>
+<p>Erstellen Sie in diesem Ordner eine neue Datei <em>city.pipe.ts</em> mit einer <em>CityPipe</em>. Diese Pipe soll die Städtenamen wie <code>Graz</code> oder <code>Hamburg</code> abhängig von einem übergebenen Parameter entweder auf Flughafencodes wie <code>GRZ</code> oder <code>HAM</code> oder auf Lanbezeichnungen wie <code>Flughafen Graz Thalerhof</code> oder <code>Airport Hamburg Helmut Schmidt</code> abbilden.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">import</span> { Pipe, PipeTransform } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+
+<span class="hljs-meta">@Pipe</span>({
+  name: <span class="hljs-string">'city'</span>,
+  pure: <span class="hljs-literal">true</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> CityPipe <span class="hljs-keyword">implements</span> PipeTransform {
+
+  transform(value: <span class="hljs-built_in">string</span>, fmt: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">string</span> {
+
+    <span class="hljs-keyword">let</span> short, long;
+
+    <span class="hljs-keyword">switch</span>(value) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'Graz'</span>:
+        short = <span class="hljs-string">'GRZ'</span>;
+        long = <span class="hljs-string">'Flughafen Graz Thalerhof'</span>;
+        <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'Hamburg'</span>:
+        short = <span class="hljs-string">'HAM'</span>;
+        long = <span class="hljs-string">'Airport Hamburg Fulsbüttel Helmut Schmidt'</span>;
+      <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'Wien'</span>:
+        short = <span class="hljs-string">'VIE'</span>;
+        long = <span class="hljs-string">'Flughafen Wien Schwechat'</span>;
+      <span class="hljs-keyword">break</span>;
+      <span class="hljs-keyword">default</span>:
+        short = long = value    ;
+    }
+
+    <span class="hljs-keyword">if</span> (fmt == <span class="hljs-string">'short'</span>) <span class="hljs-keyword">return</span> short;
+    <span class="hljs-keyword">return</span> long;
+
+  }
+
+}
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>app.module.ts</em> und stellen Sie sicher, dass die neue Pipe registriert wurde.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+imports: [
+  BrowserModule,
+  FormsModule,
+  HttpClientModule
+],
+declarations: [
+  [...],
+  AppComponent,
+  FlightSearchComponent,
+  CityPipe   <span class="hljs-comment">// &lt;-- Diese Zeile ist wichtig!</span>
+],
+providers: [
+  […]
+],
+bootstrap: [AppComponent]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+ </p>
+ </details>
+ <br>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-search.component.html</em> und nutzen Sie die <em>CityPipe</em> zum Formatieren der Städte der gefundenen Flüge.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>&lt;div <span class="hljs-keyword">class</span>=<span class="hljs-string">"card"</span>&gt;
+
+  &lt;table <span class="hljs-keyword">class</span>=<span class="hljs-string">"table table-contensed"</span> *ngIf=<span class="hljs-string">"flights.length &gt; 0"</span>&gt;
+  &lt;thead&gt;
+  &lt;tr&gt;
+  &lt;th&gt;Id&lt;<span class="hljs-regexp">/th&gt;
+  &lt;th&gt;From&lt;/</span>th&gt;
+  &lt;th&gt;To&lt;<span class="hljs-regexp">/th&gt;
+  &lt;th&gt;Date&lt;/</span>th&gt;
+  &lt;th&gt;&lt;<span class="hljs-regexp">/th&gt;
+  &lt;/</span>tr&gt;
+  &lt;<span class="hljs-regexp">/thead&gt;
+  &lt;tr *ngFor="let f of flights"
+    [class.active]="f === selectedFlight"&gt;
+  &lt;td&gt;{{f.id}}&lt;/</span>td&gt;
+  &lt;td&gt;{{f.from | city:<span class="hljs-string">'short'</span> }}&lt;<span class="hljs-regexp">/td&gt;
+  &lt;td&gt;{{f.to | city:'long' }}&lt;/</span>td&gt;
+  &lt;td&gt;{{f.date | date:<span class="hljs-string">'dd.MM.yyyy HH:mm'</span>}}&lt;<span class="hljs-regexp">/td&gt;
+  &lt;td&gt;
+    &lt;a (click)="select(f)"&gt;Select&lt;/</span>a&gt;
+  &lt;<span class="hljs-regexp">/td&gt;
+  &lt;/</span>tr&gt;
+  &lt;<span class="hljs-regexp">/table&gt;
+
+&lt;/</span>div&gt;
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+</ol>
+<h2 id="module">Module</h2>
+<p>In dieser Übung werden Sie Ihre Lösung refaktorieren, sodass sich die folgende Module-Struktur ergibt:</p>
+<pre><code><code><div>[AppModule] --&gt; [FlightBookingModule] --&gt; [SharedModule]
+</div></code></code></pre>
+<p>Jedes Modul erhält Ihren eigenen Ordner und im Rahmen dessen wird die <code>FlightSearchComponent</code> in den neu geschaffenen Ordner des <code>FlightBookingModule</code>s verschoben:</p>
+<pre><code><code><div> /src
+ +-- /app
+  +-- ...
+  +-- /flight-booking
+   +-- ...
+   +-- /flight-search
+    +-- flight-search.component.ts
+    +-- flight-search.component.html
+    +-- ..
+   +-- flight-booking.module.ts
+  +-- /shared
+   +-- ...
+   +-- shared.module.ts
+  +-- app.module.ts
+</div></code></code></pre>
+<p>Denken Sie daran, dass das <code>SharedModule</code> und das <code>FlightBookingModule</code> das von Angular angeobtene <code>CommonModule</code> (<code>@angular/common</code>) importieren muss, damit Standard-Direktiven und -Pipes wie <code>ngFor</code> oder <code>date</code> gefunden werden.</p>
+<details>
+<summary>Einzelne Schritte anzeigen</summary>
+<p>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <em>shared</em> eine Datei <em>shared.module.ts</em> und spendieren Sie dieser Datei eine Klasse <em>SharedModule</em>:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+  imports: [
+    CommonModule
+  ],
+  declarations: [
+    CityPipe
+  ],
+  exports: [
+    CityPipe
+  ]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> SharedModule { }
+</div></code></pre>
+<p>Beachten Sie, dass nun hier die <em>CityPipe</em> sowohl deklariert als auch exportiert wird.</p>
+</li>
+<li>
+<p>Erstellen Sie im Ordner <em>src/app</em> einen Ordner <em>flight-booking</em>.</p>
+</li>
+<li>
+<p>Verschieben Sie den Ordner <em>flight-search</em> nach <em>flight-booking</em>. Passen Sie alle vorhandenen relativen Pfade an, falls dieser Refaktorierungsschritt nicht ohnehin von Ihrer IDE übernommen wird.</p>
+</li>
+<li>
+<p>Erstellen Sie im Ordner <em>flight-booking</em> eine Datei <em>flight-booking.module.ts</em> mit einem <em>FlightBookingModule</em>:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+imports: [
+  CommonModule,
+  FormsModule,
+  SharedModule
+],
+declarations: [
+  FlightSearchComponent
+],
+providers:[
+],
+exports: [
+  FlightSearchComponent
+]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightBookingModule { }
+</div></code></pre>
+<p>Beachten Sie, dass hier das <em>SharedModule</em> importiert wird. Die von ihr angebotene <em>CityPipe</em> kommt in der <em>FlightSearchComponent</em> zum Einsatz.</p>
+</li>
+<li>
+<p>Wechseln Sie in die Datei <em>app.module.ts</em> und passen Sie Ihr <em>AppModule</em> wie folgt an:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+imports: [
+  BrowserModule,
+  HttpClientModule,
+  FlightBookingModule <span class="hljs-comment">// &lt;-- Wichtig</span>
+],
+declarations: [
+  AppComponent,
+  SidebarComponent,
+  NavbarComponent
+],
+providers: [
+  […]
+],
+bootstrap: [AppComponent]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+</div></code></pre>
+</li>
+<li>
+<p>Kompilieren Sie Ihre Lösung mit dem TypeScriptCompiler in Ihrer IDE und korrigieren Sie eventuelle Fehler (z. B. fehlerhafte relative Pfade, die sich durch das Verschieben ergeben haben).</p>
+</li>
+<li>
+<p>Testen Sie Ihre neu strukturierte Lösung.</p>
+</li>
+</ol>
+</p>
+</details>
+<h2 id="bonusaufgaben-zu-pipes">Bonusaufgaben zu Pipes</h2>
+<h3 id="bonus-statuscolorpipe-">Bonus: StatusColorPipe *</h3>
+<p>Erstellen Sie eine <em>StatusColorPipe</em>, welche die Eigenschaft <em>delayed</em> des Fluges (true oder false) auf eine Farbe abbildet. Nutzen Sie diese Pipe gemeinsam mit der Direktive <em>ngStyle</em>, um diese Farbe zur CSS-Eigenschaft <em>color</em> des ausgegebenen Status zuzuweisen:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">td</span> [<span class="hljs-attr">ngStyle</span>]=<span class="hljs-string">"{color: f.delayed | statusColor }"</span>&gt;</span>
+ {{ f.date | date:'dd.MM.yyyy HH:mm'}}
+<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span>
+</div></code></pre>
+<h3 id="bonus-statusfilterpipe-">Bonus: StatusFilterPipe *</h3>
+<p>Erstellen Sie eine <em>StatusFilterPipe</em>, welche ein Array mit Flügen filtert, sodass nur Flüge mit einem bestimmten Wert für <em>delayed</em> zurückgeliefert werden. Die Pipe soll wie folgt verwendet werden können:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">tr</span> *<span class="hljs-attr">ngFor</span>=<span class="hljs-string">"let f of flights | statusFilter:true"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+</div></code></pre>
+<p>Der Parameter <em>true</em> gibt hier an, dass nur die Flüge mit <em>delayed=true</em> zurückzuliefern sind.</p>
+<p>Die Transform-Methode dieser Pipe nimmt das gesamte Array entgegen und liefert danach eine gefilterte Version zurück:</p>
+<pre><code class="language-TypeScript"><div>transform(flights: <span class="hljs-built_in">Array</span>&lt;Flight&gt;, delayed: <span class="hljs-built_in">boolean</span>): <span class="hljs-built_in">Array</span>&lt;Flight&gt; {
+ […]
+}
+</div></code></pre>
+<p>Eine Beschreibung der Methoden, welche die Klasse Array anbietet, finden Sie unter anderem hier:
+<a href="https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array">https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Array</a></p>
+<h3 id="bonus-service-für-pipe-">Bonus: Service für Pipe *</h3>
+<p>Lagern Sie die Logik mit dem Switch-Block in einen neuen <code>AirportService</code> aus. Lassen Sie den <code>AirportService</code> ihn in den Konstruktor der Pipe injizieren (funktioniert wie bei Komponenten). Rufen Sie dann den Service in der Methode <code>transform</code> auf und testen Sie Ihre Lösung.</p>
+<h3 id="bonus-asynchroner-service-für-pipe-">Bonus: Asynchroner Service für Pipe **</h3>
+<p>Sie finden unter den nachfolgenden Urls zwei Services, die den offiziellen Kurz- sowie den offiziellen Lang-Namen eines Flughafens (als String) liefern:</p>
+<ul>
+<li><a href="http://angular-at.azurewebsites.net/api/airport/code?name=Graz">http://angular-at.azurewebsites.net/api/airport/code?name=Graz</a></li>
+<li><a href="http://angular-at.azurewebsites.net/api/airport/fullName?name=Graz">http://angular-at.azurewebsites.net/api/airport/fullName?name=Graz</a></li>
+</ul>
+<p>Erweitern Sie Ihren Airport-Service um Methoden, die damit die Lang- bzw. Kurz-Bezeichnung eines Flughafens als <code>Observable&lt;String&gt;</code>
+zurückliefern.</p>
+<p>Schreiben Sie eine neue <code>AsyncCityPipe</code>, die sich diesen Service injizieren lässt. Die <code>transform</code>-Methode soll an den Service delegieren und das gewünschte Ergebnis in Form des erhaltenen als <em>Observable&lt;string&gt;</em> zurückliefern. Damit Angular dieses Observable auflösen kann, muss im Template zusätzlich die Async-Pipe verwendet werden:</p>
+<pre><code class="language-HTML"><div>[...]
+{{ f.from | asyncCity:'short' | async }}
+[...]
+</div></code></pre>
+<p><strong>Wichtig:</strong> Die Pipe muss <code>pure</code> sein, um Probleme mit der Datenbindung zu vermeiden. Pipes, die nicht pure sind, werden ja nach jedem Event neu ausgeführt. Dadurch, dass die Pipe selbst ein durch die Server-Anfrage ein Daten-Event triggert, käme es hier zu einer Endlosschleife.</p>
+<h2 id="komponenten">Komponenten</h2>
+<p>In dieser Übung werden Sie zunächst die gezeigte FlightCardComponent erstellen. Danach werden Sie in einer Bonus-Übung eine eigene Komponente mit dem dabei aufgebauten Wissen erzeugen.</p>
+<h3 id="flightcardcomponent">FlightCardComponent</h3>
+<ol>
+<li>
+<p>Erstellen im Ordner <code>flight-booking</code> eine neue Komponente <code>flight-card</code>, die aus einem Unterordner <code>flight-card</code> mit folgenden Dateien besteht:</p>
+<ul>
+<li>flight-card.component.html</li>
+<li>flight-card.component.ts</li>
+</ul>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-card.component.ts</em> und spendieren Sie ihr die folgenden Member:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'flight-card'</span>,
+  templateUrl: <span class="hljs-string">'./flight-card.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightCardComponent <span class="hljs-keyword">implements</span> OnInit {
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) { }
+
+  <span class="hljs-meta">@Input</span>() item: Flight;
+  <span class="hljs-meta">@Input</span>() selected: <span class="hljs-built_in">boolean</span>;
+  <span class="hljs-meta">@Output</span>() selectedChange = <span class="hljs-keyword">new</span> EventEmitter&lt;<span class="hljs-built_in">boolean</span>&gt;();
+
+  ngOnInit() {
+  }
+
+  select() {
+    <span class="hljs-keyword">this</span>.selected = <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">this</span>.selectedChange.next(<span class="hljs-keyword">this</span>.selected);
+  }
+
+  deselect() {
+    <span class="hljs-keyword">this</span>.selected = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">this</span>.selectedChange.next(<span class="hljs-keyword">this</span>.selected);
+  }
+
+}
+</div></code></pre>
+</li>
+</ol>
+<p>Beachten Sie, dass hier der Selektor <em>flight-card</em> festgelegt wurde.</p>
+<ol>
+<li>
+<p>Öffnen Sie das Template dieser Komponente (<code>flight-card.component.html</code>). Erweitern Sie diese Datei, sodass die Karte dargestellt wird:</p>
+<pre><code class="language-TypeScript"><div>&lt;div
+<span class="hljs-keyword">class</span>=<span class="hljs-string">"card"</span>
+[ngStyle]=<span class="hljs-string">"{'background-color': (selected) ? 'rgb(204, 197, 185)' : 'white' }"</span>&gt;
+
+  &lt;div <span class="hljs-keyword">class</span>=<span class="hljs-string">"header"</span>&gt;
+  &lt;h2 <span class="hljs-keyword">class</span>=<span class="hljs-string">"title"</span>&gt;{{item.from}} - {{item.to}}&lt;<span class="hljs-regexp">/h2&gt;
+  &lt;/</span>div&gt;
+  &lt;div <span class="hljs-keyword">class</span>=<span class="hljs-string">"content"</span>&gt;
+  &lt;p&gt;Flight-No.: #{{item.id}}&lt;<span class="hljs-regexp">/p&gt;
+  &lt;p&gt;Date: {{item.date | date:'dd.MM.yyyy HH:mm'}}&lt;/</span>p&gt;
+
+  &lt;p&gt;
+  &lt;button
+    <span class="hljs-keyword">class</span>=<span class="hljs-string">"btn btn-default"</span>
+    *ngIf=<span class="hljs-string">"!selected"</span>
+    (click)=<span class="hljs-string">"select()"</span>&gt;Select&lt;<span class="hljs-regexp">/button&gt;
+  &lt;button
+    class="btn btn-default"
+    *ngIf="selected"
+    (click)="deselect()"&gt;Remove&lt;/</span>button&gt;
+
+  &lt;<span class="hljs-regexp">/p&gt;
+
+  &lt;/</span>div&gt;
+&lt;<span class="hljs-regexp">/div&gt;
+</span></div></code></pre>
+<p>Beachten Sie die Datenbindungsausdrücke in diesem Template.</p>
+</li>
+<li>
+<p>Wechseln Sie in die Datei <em>flight-booking.module.ts</em>. Vergewissern Sie sich, dass hier die neue <em>FlightCardComponent</em> registriert wird.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+imports: [
+  CommonModule,
+  FormsModule,
+  SharedModule
+],
+declarations: [
+  FlightSearchComponent,
+  FlightCardComponent  <span class="hljs-comment">// &lt;-- Diese Zeile ist wichtig!</span>
+],
+providers:[ ],
+exports: [
+  FlightSearchComponent
+]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightBookingModule { }
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-search.component.ts</em> und ergänzen Sie die eine Eigenschaft <em>basket</em>:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightSearchComponent <span class="hljs-keyword">implements</span> OnInit {
+
+  <span class="hljs-keyword">from</span>: <span class="hljs-built_in">string</span>;
+  to: <span class="hljs-built_in">string</span>;
+  flights: <span class="hljs-built_in">Array</span>&lt;Flight&gt; = [];
+  selectedFlight: Flight;
+
+
+  basket: object = {   <span class="hljs-comment">// &lt;-- Neue Eigenschaft</span>
+  <span class="hljs-string">"3"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-string">"5"</span>: <span class="hljs-literal">true</span>
+  };
+
+  […]
+}
+</div></code></pre>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-search.component.html</em>. Kommentieren Sie die tabellarische Ausgabe der gefundenen Flüge aus.</p>
+</li>
+<li>
+<p>Nutzen Sie anstatt der Tabelle die neue das Element <code>flight-card</code> um die gefundenen Flüge darzustellen. Erstellen Sie dazu eine explizite Bindung für die Eigenschaften <code>item</code>, <code>selected</code> und <code>selectedChange</code>.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"row"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngFor</span>=<span class="hljs-string">"let f of flights"</span>
+  <span class="hljs-attr">class</span>=<span class="hljs-string">"col-xs-12 col-sm-6 col-md-4 col-lg-3"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">flight-card</span>
+    [<span class="hljs-attr">item</span>]=<span class="hljs-string">"f"</span>
+    [<span class="hljs-attr">selected</span>]=<span class="hljs-string">"basket[f.id]"</span>
+    (<span class="hljs-attr">selectedChange</span>)=<span class="hljs-string">"basket[f.id] = $event"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">flight-card</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Aktualisieren Sie am Ende des Templates auch den Warenkorb, sodass hier die neue Eigenschaft <code>basket</code> anstatt von <code>selectedFlight</code> ausgegeben wird.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">pre</span>&gt;</span>{{ basket | json }}<span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+<li>
+<p>Nutzen Sie beim Aufruf der <em>FlugCardComponent</em> anstatt der Bindings für <em>selected</em> und <em>selectedChanged</em> ein Two-Way-Binding unter Verwendung der &quot;Banana-in-a-Box-Syntax&quot;.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div>&lt;div <span class="hljs-keyword">class</span>=<span class="hljs-string">"row"</span>&gt;
+  &lt;div *ngFor=<span class="hljs-string">"let f of flights"</span>
+  <span class="hljs-keyword">class</span>=<span class="hljs-string">"col-xs-12 col-sm-6 col-md-4 col-lg-3"</span>&gt;
+  &lt;flight-card
+    [item]=<span class="hljs-string">"f"</span>
+    [(selected)]=<span class="hljs-string">"basket[f.id]"</span>&gt;
+  &lt;<span class="hljs-regexp">/flight-card&gt;
+  &lt;/</span>div&gt;
+&lt;<span class="hljs-regexp">/div&gt;
+</span></div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+</ol>
+<h3 id="bonus-flightstatustogglecomponent-">Bonus: FlightStatusToggleComponent **</h3>
+<p>Erstellen Sie eine <em>StatusToggleComponent</em>, die das Flag delayed eines Fluges per Two-Way-Binding entgegennimmt und als Link anzeigt. Bei jedem Klick auf diesen Link soll der Status gewechselt werden. Die Komponente soll wie folgt im Template der FlightCardComponent aufgerufen werden werden können:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">status-toggle</span> [(<span class="hljs-attr">status</span>)]=<span class="hljs-string">"item.delayed"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">status-toggle</span>&gt;</span>
+</div></code></pre>
+<h3 id="bonus-content-projection-">Bonus: Content Projection **</h3>
+<p>In dieser Bonus-Übung schaffen Sie die Möglichkeit, die Darstellung der <em>FlightCardComponent</em> zu erweitern, indem Sie beim Aufruf zusätzlich anzuzeigendes HTML übergeben.</p>
+<ol>
+<li>
+<p>Öffnen Sie die Datei flight-search.component.html und übergeben Sie an die_FlightCardComponent_ zusätzliches HTML:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">flight-card</span> […]&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">pre</span>&gt;</span>{{ f | json }}<span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">flight-card</span>&gt;</span>
+</div></code></pre>
+</li>
+<li>
+<p>Platzieren Sie im <strong>Template der</strong>  <strong>FlightCardComponent</strong> das Element <em>ng-content</em>, um anzuzeigen, wo das übergebene Markup anzuzeigen ist:</p>
+<pre><code class="language-HTML"><div>[…]
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Flight-No.: #{{item.id}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Date: {{item.date | date:'dd.MM.yyyy HH:mm'}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">ng-content</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">ng-content</span>&gt;</span>
+
+  […]
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+[…]
+</div></code></pre>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+<li>
+<p>Ergänzen Sie das Template, sodass es nun das Element <em>ng-content</em> zwei Mal verwendet – einmal im oberen Bereich und einmal im unteren Bereich der Komponente:</p>
+<pre><code class="language-HTML"><div>[…]
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ng-content</span> <span class="hljs-attr">select</span>=<span class="hljs-string">".top"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">ng-content</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Flight-No.: #{{item.id}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Date: {{item.date | date:'dd.MM.yyyy HH:mm'}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">ng-content</span> <span class="hljs-attr">select</span>=<span class="hljs-string">".bottom"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">ng-content</span>&gt;</span>
+
+  […]
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+[…]
+</div></code></pre>
+<p>Um Angular zu zeigen, was in die einzelnen mit <em>ng-content</em> definierten Platzhalter einzufügen ist, erhalten diese über die Eigenschaft <em>select</em> einen CSS-Selektor, der einen Teil des übergebenen Markups adressiert. Der Selektor <em>.top</em> sucht im Markup beispielsweise nach einem Element mit der Klasse <em>top</em> und fügt es in das jeweilige <em>ng-content</em>-Element ein.</p>
+</li>
+<li>
+<p>Öffnen Sie die Datei <em>flight-search.component.html</em>. Übergeben Sie beim Aufruf der <em>flight-card</em> Elemente für die beiden definierten Platzhalter:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">flight-card</span> [<span class="hljs-attr">...</span>]&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"top"</span>&gt;</span>Flight<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">pre</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"bottom"</span>&gt;</span>{{ f | json }}<span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">flight-card</span>&gt;</span>
+</div></code></pre>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+</ol>
+
+    </body>
+    </html>

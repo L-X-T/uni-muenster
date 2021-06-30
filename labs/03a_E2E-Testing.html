@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <title>Angular-Workshop: E2E-Testing</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body>
+        <h1 id="Angular-Workshop-E2E-Testing">Angular-Workshop: E2E-Testing</h1>
+<ul>
+<li><a href="#angular-workshop-e2e-testing">Angular-Workshop: E2E-Testing</a>
+<ul>
+<li><a href="#vorbereitung">Vorbereitung</a></li>
+<li><a href="#e2e-test-erstellen-page-title">E2E-Test erstellen: Page Title</a></li>
+<li><a href="#e2e-test-erstellen-flight-search">E2E-Test erstellen: Flight Search</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="Vorbereitung">Vorbereitung</h2>
+<ol>
+<li>
+<p>Falls noch vorhanden, löschen Sie alle <code>.e2s-spec.ts</code>-Dateien aus dem Ordner <code>/e2e/src</code>. Diese Dateien enthalten die von der CLI generierten Testfälle, welche im Laufe der Schulung nicht gepflegt wurden und deswegen fehlschlagen würden.</p>
+</li>
+<li>
+<p>Aktualisieren Sie die Konfiguration für den E2E-Test in der Datei <code>/e2e/protractor.conf.js</code>, damit dieser unter Port 4299 startet:</p>
+<pre><code class="language-typescript"><div>exports.config = {
+[...]
+baseUrl: <span class="hljs-string">'http://localhost:4299/'</span>,
+[...]
+};
+</div></code></pre>
+</li>
+<li>
+<p>Passen Sie auch den Skript-Aufruf in der <code>package.json</code> an:</p>
+<pre><code class="language-typescript"><div>[...]
+<span class="hljs-string">"scripts"</span>: {
+    <span class="hljs-string">"ng"</span>: <span class="hljs-string">"ng"</span>,
+    <span class="hljs-string">"start"</span>: <span class="hljs-string">"ng serve"</span>,
+    <span class="hljs-string">"build"</span>: <span class="hljs-string">"ng build"</span>,
+    <span class="hljs-string">"test"</span>: <span class="hljs-string">"ng test"</span>,
+    <span class="hljs-string">"lint"</span>: <span class="hljs-string">"ng lint"</span>,
+    <span class="hljs-string">"e2e"</span>: <span class="hljs-string">"ng e2e --port 4299"</span>
+},
+[...]
+</div></code></pre>
+</li>
+</ol>
+<h2 id="E2E-Test-erstellen-Page-Title">E2E-Test erstellen: Page Title</h2>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <code>/e2e/src</code> die neue Datei <code>check-page-title.e2e-spec.ts</code> und implementieren Sie einen Test, der den Title der Angular Wep App prüft.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'Page Title E2E Test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        browser.get(<span class="hljs-string">'http://localhost:4299'</span>);
+    });
+
+    it(<span class="hljs-string">'should verify the page title'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-comment">// Asynchronous events are handled by the testing environment</span>
+        <span class="hljs-keyword">const</span> pageTitle = browser.getTitle();
+        expect(pageTitle).toEqual(<span class="hljs-string">'Flight42'</span>);
+    });
+
+    it(<span class="hljs-string">'should verify the page title manually'</span>, <span class="hljs-function">(<span class="hljs-params">done</span>) =&gt;</span> {
+        <span class="hljs-comment">// Asynchronous events are handled manually by providing a callback function to the promise then method</span>
+        browser.getTitle()
+        .then(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">pageTitle</span>) </span>{
+            expect(pageTitle).toEqual(<span class="hljs-string">'Flight42'</span>);
+            done();
+        });
+    });
+});
+</div></code></pre>
+ </p>
+ </details>
+<p>Sie finden hier eine synchron and eine asynchron implementierte Variante.</p>
+</li>
+<li>
+<p>Um den Test zu starten, können Sie den Befehl <code>npm run e2e</code> verwenden.</p>
+</li>
+</ol>
+<h2 id="E2E-Test-erstellen-Flight-Search">E2E-Test erstellen: Flight Search</h2>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <code>/e2e/src</code> die neue Datei <code>flight-search.e2e-spec.ts</code> und implementieren Sie einen Test, der die Flug Suche testet.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'Flight Search E2E Test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">from</span>: ElementFinder;
+    <span class="hljs-keyword">let</span> to: ElementFinder;
+    <span class="hljs-keyword">let</span> search: ElementFinder;
+    <span class="hljs-keyword">let</span> flights: ElementArrayFinder;
+    <span class="hljs-keyword">let</span> firstFlight: ElementFinder;
+    <span class="hljs-keyword">let</span> card: ElementFinder;
+
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        browser.get(<span class="hljs-string">'http://localhost:4299'</span>);
+        <span class="hljs-comment">// Maximize browser to show sidebar and flight-search item</span>
+        browser.manage().window().maximize();
+        
+        <span class="hljs-comment">// Navigate to flight-search component</span>
+        <span class="hljs-keyword">const</span> navigate = element(by.css(<span class="hljs-string">'[routerlink="flight-booking/flight-search"]'</span>));
+        navigate.click();
+        
+        <span class="hljs-keyword">from</span> = element(by.css(<span class="hljs-string">'input[name=from]'</span>));
+        <span class="hljs-keyword">from</span>.clear();
+        <span class="hljs-keyword">from</span>.sendKeys(<span class="hljs-string">'Graz'</span>);
+
+        to = element(by.css(<span class="hljs-string">'input[name=to]'</span>));
+        to.clear();
+        to.sendKeys(<span class="hljs-string">'Hamburg'</span>);
+
+        search = element(by.cssContainingText(<span class="hljs-string">'button'</span>, <span class="hljs-string">'Search'</span>));
+        search.click();
+
+        flights = element.all(by.tagName(<span class="hljs-string">'app-flight-card'</span>));
+        firstFlight = flights.first();
+        card = firstFlight.element(by.tagName(<span class="hljs-string">'mat-card'</span>));
+    });
+
+    [...]
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Implementieren Sie einen Test der prüft wie viele Flüge gefunden werden. Passen Sie den Erwartungswert an das reale Suchergebnis an.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'Flight Search E2E Test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    [...]
+
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        [...]
+    });
+
+    it(<span class="hljs-string">'should show ten flight cards after search'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        expect(flights.count()).toBe(<span class="hljs-number">10</span>);
+    });
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Implementieren Sie einen Test der prüft ob die erwartete Hintergrundfarbe angezeigt wird</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'Flight Search E2E Test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    [...]
+
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        [...]
+    });
+
+    it(<span class="hljs-string">'should verify card background color change: initially/unselected, after mouse click select'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">const</span> selectFlight = firstFlight.element(by.cssContainingText(<span class="hljs-string">'button mat-icon'</span>, <span class="hljs-string">'add'</span>));
+        <span class="hljs-keyword">const</span> white = <span class="hljs-string">'rgba(255, 255, 255, 1)'</span>;
+        <span class="hljs-keyword">const</span> selectedColor = <span class="hljs-string">'rgba(176, 196, 222, 1)'</span>;
+
+        <span class="hljs-comment">// Check CSS background-color by name</span>
+        <span class="hljs-keyword">let</span> cardBackground = card.getAttribute(<span class="hljs-string">'style'</span>);
+        expect(cardBackground).toContain(<span class="hljs-string">'background-color: white'</span>);
+
+        <span class="hljs-comment">// MouseClick to select flight card</span>
+        <span class="hljs-comment">// Check CSS background-color as RGBA value</span>
+        browser.sleep(<span class="hljs-number">1000</span>);
+        browser.actions().mouseMove(selectFlight).perform();
+        browser.actions().click().perform();
+        cardBackground = card.getCssValue(<span class="hljs-string">'background-color'</span>);
+        expect(cardBackground).toBe(selectedColor);
+        browser.sleep(<span class="hljs-number">1000</span>);
+    });
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Implementieren Sie einen Test der prüft ob der Search Button deaktiviert wird, falls die Property &quot;from&quot; nicht gesetzt ist.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'Flight Search E2E Test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    [...]
+
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        [...]
+    });
+
+    it(<span class="hljs-string">'should disable search button if from is empty'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-comment">// Force interaction with sendKeys to update Angular binding for disabled button state</span>
+        <span class="hljs-keyword">from</span>.clear();
+        <span class="hljs-keyword">from</span>.sendKeys(<span class="hljs-string">' '</span>, protractor.Key.BACK_SPACE);
+        expect(search.isEnabled()).toBe(<span class="hljs-literal">false</span>);
+        browser.sleep(<span class="hljs-number">1000</span>);
+    });
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Implementieren Sie einen Test der prüft ob der Search Button aktiviert wird, falls die Properties &quot;from&quot; und &quot;to&quot; gesetzt sind.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-typescript"><div>describe(<span class="hljs-string">'Flight Search E2E Test'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    [...]
+
+    beforeEach(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        [...]
+    });
+    
+    it(<span class="hljs-string">'should enable search button if from and to have values'</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">from</span>.clear();
+        <span class="hljs-keyword">from</span>.sendKeys(<span class="hljs-string">'Graz'</span>);
+        to.clear();
+        to.sendKeys(<span class="hljs-string">'Hamburg'</span>);
+        expect(search.isEnabled()).toBe(<span class="hljs-literal">true</span>);
+        browser.sleep(<span class="hljs-number">1000</span>);
+    });
+});
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Um den Test zu starten, können Sie den Befehl <code>npm run e2e</code> verwenden.</p>
+</li>
+</ol>
+
+    </body>
+    </html>

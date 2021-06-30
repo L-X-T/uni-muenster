@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        <title>Angular Workshop: Routing</title>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+        
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        <style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        
+        
+    </head>
+    <body>
+        <h1 id="Angular-Workshop-Routing">Angular Workshop: Routing</h1>
+<ul>
+<li><a href="#routing-implementieren">Routing implementieren</a></li>
+<li><a href="#bonus-routen-im-hash-fragment-und-tracing">Bonus: Routen im Hash-Fragment und Tracing *</a></li>
+<li><a href="#parametrisierbare-routen">Parametrisierbare Routen</a></li>
+<li><a href="#bonus-flug-editieren">Bonus: Flug Editieren *</a></li>
+<li><a href="#bonus-programmatisches-routing">Bonus: Programmatisches Routing *</a></li>
+</ul>
+<h2 id="Routing-implementieren">Routing implementieren</h2>
+<p>In dieser Übung werden Sie die folgende Menüstruktur mit Routing implementieren:</p>
+<pre><code><div>   AppComponent
+      +----------- HomeComponent
+      +----------- FlightSearchComponent
+      +----------- PassengerSearchComponent (Dummy)
+</div></code></pre>
+<p>Dabei wird folgendes Muster berücksichtigt:</p>
+<ul>
+<li>Die <code>AppComponent</code> und <code>HomeComponent</code> sind Teil des <code>AppModules</code></li>
+<li>Die anderen beiden Komponenten sind Teil des <code>FlightBookingModules</code></li>
+<li>Jedes Modul bekommt seine eigene Routen-Konfiguration mit <code>forRoot</code> bzw. <code>forChild</code> zugewiesen.</li>
+</ul>
+<p>Falls Sie möchten, leiten Sie die folgenden Punkte durch die Übung:</p>
+<ol>
+<li>
+<p>Fügen Sie die folgenden zusätzlichen (Dummy-)Komponenten, welche als Routing-Ziele dienen sollen, hinzu:</p>
+<ul>
+<li>HomeComponent (Ordner <code>src/app/home</code>)</li>
+<li>PassengerSearchComponent (Order <code>src/app/flight-booking/passenger-search</code>)</li>
+</ul>
+</li>
+<li>
+<p>Stellen Sie sicher, dass die neue HomeComponent beim <code>AppModule</code> registriert ist.</p>
+</li>
+<li>
+<p>Stellen Sie sicher, dass die neue <code>PassengerSearchComponent</code> beim <code>FlightBookingModule</code> registriert ist.</p>
+</li>
+<li>
+<p>Erstellen Sie im Ordner <code>src/app</code> für Ihr <code>AppModule</code> eine Routen-Konfiguration <code>app.routes.ts</code>.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> APP_ROUTES: Routes = [
+  {
+    path: <span class="hljs-string">''</span>,
+    redirectTo: <span class="hljs-string">'home'</span>,
+    pathMatch: <span class="hljs-string">'full'</span>
+  },
+  {
+    path: <span class="hljs-string">'home'</span>,
+    component: HomeComponent
+  },
+  {
+    path: <span class="hljs-string">'**'</span>,
+    redirectTo: <span class="hljs-string">'home'</span>
+  }
+];
+</div></code></pre>
+</li>
+</ol>
+  </p>
+  </details>
+<ol start="5">
+<li>
+<p>Öffnen Sie die Datei <code>app.module.ts</code> und importieren Sie das <code>RouterModule</code> von Angular. Geben Sie dabei die Routen-Konfiguration aus der Datei <code>app.routes.ts</code> an.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+  imports: [
+    BrowserModule,
+    FormsModule,
+    FlightBookingModule,
+    HttpClientModule,
+
+    RouterModule.forRoot(APP_ROUTES) <span class="hljs-comment">// &lt;-- Add this line!</span>
+
+  ],
+  declarations: [
+    AppComponent,
+    SidebarComponent,
+    NavbarComponent,
+    HomeComponent
+  ],
+  providers: [
+      […]
+  ],
+  bootstrap: [AppComponent]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule { }
+
+</div></code></pre>
+</p>
+</details>
+<p>Beachten Sie, dass hier die Methode <code>forRoot</code> zum Einsatz kommt, weil es sich beim AppModule um das RootModule (Hauptmodul) der Anwendung handelt.</p>
+</li>
+<li>
+<p>Erzeugen Sie im Ordner <code>src/app/flight-booking</code> eine Datei <code>flight-booking.routes.ts</code> mit einer Routenkonfiguration für die <code>FlightSearchComponent</code> und die <code>PassengerSearchComponent</code>.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> FLIGHT_BOOKING_ROUTES: Routes = [
+  {
+    path: <span class="hljs-string">'flight-search'</span>,
+    component: FlightSearchComponent
+  },
+  {
+    path: <span class="hljs-string">'passenger-search'</span>,
+    component: PassengerSearchComponent
+  }
+];
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-booking.module.ts</code> im Ordner <code>src/app/flight-booking</code> und importieren Sie das RouterModule. Geben Sie dabei die neue Routenkonfiguration an. Beachten Sie, dass hier die Methode <strong>forChild</strong> zum Einsatz kommt, weil es sich hierbei um ein Child-Module (Feature-Module) handelt.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+  imports: [
+    CommonModule,
+    FormsModule,
+    SharedModule,
+
+    RouterModule.forChild(FLIGHT_BOOKING_ROUTES) <span class="hljs-comment">// &lt;-- Add this line!</span>
+
+  ],
+  declarations: [
+    FlightSearchComponent,
+    FlightCardComponent,
+    PassengerSearchComponent,
+    FlightEditComponent
+  ],
+  providers: [
+    FlightService
+  ],
+  exports: [
+    FlightSearchComponent
+  ]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightBookingModule { }
+</div></code></pre>
+</li>
+</ol>
+  </p>
+  </details>
+<ol start="8">
+<li>
+<p>Öffnen Sie die Datei <code>app.component.html</code> und ersetzen Sie den Aufruf von <code>flight-search</code> durch einen Platzhalter (<code>&lt;router-outlet&gt;&lt;/router-outlet&gt;</code>) für den Router.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- &lt;flight-search&gt;&lt;/flight-search&gt; --&gt;</span> <span class="hljs-comment">&lt;!-- alt --&gt;</span> 
+    <span class="hljs-tag">&lt;<span class="hljs-name">router-outlet</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">router-outlet</span>&gt;</span> <span class="hljs-comment">&lt;!-- neu --&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>sidebar.component.html</code> und aktualisieren Sie die Menüeinträge um das Attribut routerLink, um die einzelnen Routen zu aktivieren.</p>
+ <details>
+ <summary>Code anzeigen</summary>
+ <p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">ul</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"nav"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"ti-home"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">routerLink</span>=<span class="hljs-string">"home"</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"ti-arrow-top-right"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">routerLink</span>=<span class="hljs-string">"flight-search"</span>&gt;</span>Flights<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"ti-user"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">routerLink</span>=<span class="hljs-string">"passenger-search"</span>&gt;</span>Passengers<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+</div></code></pre>
+ </p>
+ </details>
+</li>
+<li>
+<p>Prüfen Sie mit dem TypeScript-Compiler in Ihrer IDE, ob es Kompilierungsfehler gibt und korrigieren Sie diese ggf.</p>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung.</p>
+</li>
+</ol>
+<h2 id="Bonus-Routen-im-Hash-Fragment-und-Tracing">Bonus: Routen im Hash-Fragment und Tracing *</h2>
+<p>Um die Arbeitsweise des Routers zu beeinflussen, nimmt die Methode <code>forRoot</code> über den zweiten optionalen Parameter ein Objekt entgegen. Damit lässt sich zum Beispiel angeben, dass Routen im Hash-Fragment der Url zu positionieren (z. B. <a href="http://localhost:4200/#/route">http://localhost:4200/#/route</a> anstatt <a href="http://localhost:4200/route">http://localhost:4200/route</a>) sind oder dass der Router Tracing-Meldungen auf der Konsole ausgeben soll:</p>
+<pre><code class="language-TypeScript"><div>RouterModule.forRoot(APP_ROUTES, { useHash: <span class="hljs-literal">true</span>, enableTracing: <span class="hljs-literal">true</span>});
+</div></code></pre>
+<p>Aktivieren Sie diese Optionen und stellen Sie sicher, dass danach die Route im Hash-Fragment platziert wird, sowie dass der Router Informationen zum Routing auf der Konsole ausgibt.</p>
+<h2 id="Parametrisierbare-Routen">Parametrisierbare Routen</h2>
+<p>In dieser Übung werden Sie im <code>FlightBookingModule</code> eine neue Komponent <code>FlightEditComponent</code> erstellen:</p>
+<pre><code><div>   AppComponent
+      +----------- HomeComponent
+      +----------- FlightSearchComponent ---- id ----+
+      +----------- PassengerSearchComponent          |
+      +----------- FlightEditComponent [NEU!] &lt;------+
+</div></code></pre>
+<p>Diese soll eine Id als Url-Segment und einen Matrix-Parameter showDetails entgegennehmen und vorerst <strong>lediglich</strong> ausgeben. Diese Komponente soll über die einzelnen <code>FlightCardComponents</code> aufgerufen werden können.</p>
+<ol>
+<li>
+<p>Erstellen Sie im Ordner <code>src/app/flight-booking/flight-edit</code> eine <code>FlightEditComponent</code> (als Dummy-Komponente).</p>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-booking.module.ts</code> und stellen Sie sicher, dass die neue Komponente beim <code>FlightBookingModule</code> registriert ist.</p>
+</li>
+<li>
+<p>Lassen Sie sich die ActivatedRoute in den Konstruktor der <code>FlightEditComponent</code> injizieren und rufen Sie die Matrix-Parameter <code>id</code> sowie <code>showDetails</code> ab.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'app-flight-edit'</span>,
+  templateUrl: <span class="hljs-string">'./flight-edit.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightEditComponent <span class="hljs-keyword">implements</span> OnInit {
+  id: <span class="hljs-built_in">string</span>;
+  showDetails: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
+    <span class="hljs-keyword">private</span> route: ActivatedRoute</span>) { }
+
+  ngOnInit() {
+    <span class="hljs-keyword">this</span>.route.params.subscribe(
+      <span class="hljs-function"><span class="hljs-params">params</span> =&gt;</span> {
+        <span class="hljs-keyword">this</span>.id = params[<span class="hljs-string">'id'</span>];
+        <span class="hljs-keyword">this</span>.showDetails = params[<span class="hljs-string">'showDetails'</span>];
+      }
+    );
+  }
+}
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-edit.component.html</code> und geben Sie dort die abgerufenen Parameter aus.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"header"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"title"</span>&gt;</span>Flight Edit<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Id: {{id}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>ShowDetails: {{showDetails}}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-booking.routes.ts</code> und fügen Sie eine Route für die neue <code>FlightEditComponent</code> hinzu.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> FLIGHT_BOOKING_ROUTES: Routes = [
+  […],
+  {
+    path: <span class="hljs-string">'flight-edit/:id'</span>,
+    component: FlightEditComponent
+  }
+];
+</div></code></pre>
+<p>Das Segment <code>:id</code> steht hier als Platzhalter für den Parameter id. Da es für den Parameter <code>showDetails</code> keinen Platzhalter gibt, ist dieser als Matrix-Parameter zu übergeben.</p>
+</p>
+</details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-card.component.html</code> und fügen Sie einen Link für die neue Route ein.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-default"</span> 
+  [<span class="hljs-attr">routerLink</span>]=<span class="hljs-string">"['/flight-edit', item.id, { showDetails: true }]"</span>&gt;</span>   
+  Edit
+<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Prüfen Sie mit dem TypeScript-Compiler in Ihrer IDE, ob es Kompilierungsfehler gibt und korrigieren Sie diese ggf.</p>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung: Suchen Sie nach Flügen und klicken Sie bei einem der gefundenen Flüge auf Edit.</p>
+</li>
+</ol>
+<h2 id="Bonus-Flug-Editieren">Bonus: Flug Editieren *</h2>
+<p>In dieser Übung schaffen Sie die Möglichkeit, den in der <code>FlightEditComponent</code> präsentierten Flug zu editieren.</p>
+<ol>
+<li>
+<p>Öffnen Sie die Datei <code>flight.service.ts</code> und ergänzen Sie eine Methode <code>findById</code>, welche einen Flug im Rahmen eines Observables anhand der Id liefert und eine Methode save, die einen Flug entgegennimmt und diesen speichert.</p>
+<p>Zum Abrufen eines Fluges anhand der Id können Sie mit dem <code>HttpClient</code> einen GET-Aufruf mit dem Parameter id machen.</p>
+<p>Zum Speichern können Sie einen Flug mit der Methode <code>post</code> des <code>HttpClients</code> an den Server senden:</p>
+<pre><code class="language-TypeScript"><div><span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.http.post&lt;Flight&gt;(url, flight, { headers });
+</div></code></pre>
+<p>Beachten Sie, dass die Datensätze mit den Ids 1 bis 5 nicht gespeichert werden können, da sie Präsentationen vorbehalen sind.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div>findById(id: <span class="hljs-built_in">string</span>): Observable&lt;Flight&gt; {
+    <span class="hljs-keyword">const</span> url = <span class="hljs-string">'http://www.angular.at/api/flight'</span>;
+    <span class="hljs-keyword">const</span> params = <span class="hljs-keyword">new</span> HttpParams()
+                      .set(<span class="hljs-string">'id'</span>, id);
+    <span class="hljs-keyword">const</span> headers = <span class="hljs-keyword">new</span> HttpHeaders()
+                      .set(<span class="hljs-string">'Accept'</span>, <span class="hljs-string">'application/json'</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.http.get&lt;Flight&gt;(url, { params, headers});
+}
+
+save(f: Flight): Observable&lt;Flight&gt; {
+    <span class="hljs-keyword">const</span> url = <span class="hljs-string">'http://www.angular.at/api/flight'</span>;
+    <span class="hljs-keyword">const</span> headers = <span class="hljs-keyword">new</span> HttpHeaders()
+                      .set(<span class="hljs-string">'Accept'</span>, <span class="hljs-string">'application/json'</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.http.post&lt;Flight&gt;(url, f, { headers});
+}
+</div></code></pre>
+</li>
+</ol>
+  </p>
+  </details>
+<ol start="2">
+<li>
+<p>Öffnen Sie die <code>flight-edit.component.ts</code> und fügen Sie eine Eigenschaft flight vom Type Flight und eine Eigenschaft errors vom Typ string ein. Diese Eigenschaft soll eventuelle Fehler, die sich beim Speichern ergeben, aufnehmen. Lassen Sie sich außerdem den FlightService injizieren.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'app-flight-edit'</span>,
+  templateUrl: <span class="hljs-string">'./flight-edit.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightEditComponent <span class="hljs-keyword">implements</span> OnInit {
+  id: <span class="hljs-built_in">string</span>;
+  showDetails: <span class="hljs-built_in">string</span>;
+
+  flight: Flight;
+  errors: <span class="hljs-built_in">string</span>;
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
+    <span class="hljs-keyword">private</span> route: ActivatedRoute,
+    <span class="hljs-keyword">private</span> flightService: FlightService</span>) { }
+
+  […]
+}
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Laden Sie in der <code>FlightEditComponent</code> nach dem Abrufen des Parameters <code>id</code> den jeweiligen Flug und bieten Sie eine <code>save</code>-Methode zum Speichern an.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'app-flight-edit'</span>,
+  templateUrl: <span class="hljs-string">'./flight-edit.component.html'</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightEditComponent <span class="hljs-keyword">implements</span> OnInit {
+  
+  […]
+
+  ngOnInit() {
+    <span class="hljs-keyword">this</span>.route.params.subscribe(
+      <span class="hljs-function"><span class="hljs-params">params</span> =&gt;</span> {
+        <span class="hljs-keyword">this</span>.id = params[<span class="hljs-string">'id'</span>];
+        <span class="hljs-keyword">this</span>.showDetails = params[<span class="hljs-string">'showDetails'</span>];
+
+        <span class="hljs-keyword">this</span>.flightService.findById(<span class="hljs-keyword">this</span>.id).subscribe(
+          <span class="hljs-function"><span class="hljs-params">flight</span> =&gt;</span> { <span class="hljs-keyword">this</span>.flight = flight; <span class="hljs-keyword">this</span>.errors = <span class="hljs-string">''</span>; },
+          <span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> { <span class="hljs-keyword">this</span>.errors = <span class="hljs-string">'Fehler beim Laden'</span>; }
+        );
+      }
+    )
+  }
+
+  save() {
+    <span class="hljs-keyword">this</span>.flightService.save(<span class="hljs-keyword">this</span>.flight).subscribe(
+      <span class="hljs-function"><span class="hljs-params">flight</span> =&gt;</span> { 
+          <span class="hljs-keyword">this</span>.flight = flight; 
+          <span class="hljs-keyword">this</span>.errors = <span class="hljs-string">'Saving was successful!'</span>; 
+      },
+      <span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> { <span class="hljs-keyword">this</span>.errors = <span class="hljs-string">'Error saving data'</span>; }
+    );
+  }
+
+}
+</div></code></pre>
+</p>
+</details>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-edit.component.html</code> und stellen Sie ein Formular zum Editieren des geladenen Fluges bereit:</p>
+<pre><code class="language-HTML"><div><span class="hljs-tag">&lt;<span class="hljs-name">form</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"flight"</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>Id:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"flight.id"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"id"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>From:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> [(<span class="hljs-attr">ngModel</span>)]=<span class="hljs-string">"flight.from"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"from"</span> 
+          <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Fügen Sie hier Felder für die weiteren Eigenschaften --&gt;</span>
+<span class="hljs-comment">&lt;!-- des Fluges hinzu --&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-default"</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"save()"</span>&gt;</span>Save<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</div></code></pre>
+</li>
+<li>
+<p>Öffnen Sie die Datei <code>flight-booking.module.ts</code> und stellen Sie sicher, dass der <code>FlightService</code> hier registriert wird.</p>
+<details>
+<summary>Code anzeigen</summary>
+<p>
+<pre><code class="language-TypeScript"><div><span class="hljs-meta">@NgModule</span>({
+  imports: [
+    CommonModule,
+    FormsModule,
+    SharedModule,
+    RouterModule.forChild(FLIGHT_BOOKING_ROUTES)
+  ],
+  declarations: [
+    FlightSearchComponent,
+    FlightCardComponent,
+    PassengerSearchComponent,
+    FlightEditComponent
+  ],
+  providers: [
+    FlightService  <span class="hljs-comment">// &lt;-- Diese Zeile ist wichtig</span>
+  ],
+  exports: [
+    FlightSearchComponent
+  ]
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> FlightBookingModule { }
+</div></code></pre>
+</p>
+</details>
+<p>Hierdurch wird der <code>FlightService</code> als globaler Service registriert. Da er nun von mehreren Komponenten verwendet ist, ist das zweckmäßig. Alternativ dazu könnte er auch für die FlightBookingComponent registriert werden.</p>
+</li>
+<li>
+<p>Prüfen Sie mit dem TypeScript-Compiler in Ihrer IDE, ob es Kompilierungsfehler gibt und korrigieren Sie diese ggf.</p>
+</li>
+<li>
+<p>Testen Sie Ihre Lösung. Beachten Sie, dass Sie die Datensätze 1 bis 5 nicht verändern können und dass Sie einen neuen Datensatz erzeugen können, indem Sie die Id 0 angeben.</p>
+</li>
+</ol>
+<h2 id="Bonus-Programmatisches-Routing">Bonus: Programmatisches Routing *</h2>
+<p>Betrachten Sie die Dokumentation der Methode navigate des Routers unter [1]. Lassen Sie sich in die <code>FlightEditComponent</code> den Router injizieren und nutzen Sie dessen <code>navigate</code>-Methode nach dem erfolgreichen Speichern, um den Benutzer zurück zur Suchmaske zu leiten.</p>
+<p>Erweiterung: Stellen Sie nach dem Umleiten zur Suchmaske eine Erfolgsmeldung für den letzten Speicherungsvorgang dar.</p>
+<p>[1] <a href="https://angular.io/docs/ts/latest/api/router/index/Router-class.html#!#navigate-anchor">https://angular.io/docs/ts/latest/api/router/index/Router-class.html#!#navigate-anchor</a></p>
+
+    </body>
+    </html>
