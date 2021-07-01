@@ -10,20 +10,36 @@
         <input formControlName="id" class="form-control" readonly="readonly">
       </div>
 
+      <flight-validation-errors *ngIf="!editForm?.controls['id']?.untouched"
+                                [errors]="editForm?.controls['id']?.errors">
+      </flight-validation-errors>
+
       <div class="form-group">
         <label>Date:</label>
         <input formControlName="date" class="form-control">
       </div>
+
+      <flight-validation-errors *ngIf="!editForm?.controls['date']?.untouched"
+                                [errors]="editForm?.controls['date']?.errors">
+      </flight-validation-errors>
 
       <div class="form-group">
         <label>From:</label>
         <input formControlName="from" class="form-control">
       </div>
 
+      <flight-validation-errors *ngIf="!editForm?.controls['from']?.untouched"
+                                [errors]="editForm?.controls['from']?.errors">
+      </flight-validation-errors>
+
       <div class="form-group">
         <label>To:</label>
         <input formControlName="to" class="form-control">
       </div>
+
+      <flight-validation-errors *ngIf="!editForm?.controls['to']?.untouched"
+                                [errors]="editForm?.controls['to']?.errors">
+      </flight-validation-errors>
 
       <div class="form-group">
         <button (click)="save()" class="btn btn-default">Save</button>

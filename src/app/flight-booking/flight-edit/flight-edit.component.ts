@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { FlightService } from '../flight-search/flight.service';
 import { Flight } from '../../entities/flight';
@@ -22,9 +22,9 @@ export class FlightEditComponent implements OnChanges {
   ngOnChanges(): void {
     this.editForm = this.formBuilder.group({
       id: [this.flight.id],
-      from: [this.flight.from],
-      to: [this.flight.to],
-      date: [this.flight.date]
+      from: [this.flight.from, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      to: [this.flight.to, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      date: [this.flight.date, [Validators.required, Validators.minLength(21), Validators.maxLength(35)]]
     });
 
     this.logEditForm();
