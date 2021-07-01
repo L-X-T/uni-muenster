@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
-import { FlightService } from '../flight-search/flight.service';
 import { Flight } from '../../entities/flight';
 import { validateCity } from '../../shared/validation/city-validator';
 import { validCities } from '../../shared/validation/city-validator.directive';
@@ -20,18 +19,34 @@ export class FlightEditComponent implements OnChanges, OnInit {
   editForm: FormGroup;
   isEditFormInitialized = false;
 
-  constructor(private formBuilder: FormBuilder, private flightService: FlightService) {}
+  controls: { label: string; field: string; validators?: ValidatorFn | ValidatorFn[] }[] = [
+    {
+      label: 'Id',
+      field: 'id'
+    },
+    {
+      label: 'From',
+      field: 'from',
+      validators: [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity(validCities)]
+    },
+    {
+      label: 'To',
+      field: 'to',
+      validators: [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity(validCities)]
+    },
+    {
+      label: 'Date',
+      field: 'date',
+      validators: [Validators.required, Validators.minLength(21), Validators.maxLength(35)]
+    }
+  ];
+
+  constructor(private formBuilder: FormBuilder) {}
 
   ngOnChanges(): void {
     this.initForm();
 
     this.logEditForm();
-
-    if (environment.debug) {
-      this.editForm.valueChanges.subscribe((value) => {
-        console.debug('changes: ', value);
-      });
-    }
   }
 
   ngOnInit(): void {
@@ -40,6 +55,12 @@ export class FlightEditComponent implements OnChanges, OnInit {
     }
 
     this.editForm.validator = validateRoundTrip;
+
+    if (environment.debug) {
+      this.editForm.valueChanges.subscribe((value) => {
+        console.debug('changes: ', value);
+      });
+    }
   }
 
   save(): void {
@@ -49,12 +70,10 @@ export class FlightEditComponent implements OnChanges, OnInit {
   }
 
   private initForm(): void {
-    this.editForm = this.formBuilder.group({
-      id: [this.flight.id],
-      from: [this.flight.from, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity(validCities)]],
-      to: [this.flight.to, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity(validCities)]],
-      date: [this.flight.date, [Validators.required, Validators.minLength(21), Validators.maxLength(35)]]
-    });
+    this.editForm = this.formBuilder.group({});
+    for (let control of this.controls) {
+      this.editForm.addControl(control.field, new FormControl(this.flight[control.field], control.validators));
+    }
 
     this.isEditFormInitialized = true;
   }
