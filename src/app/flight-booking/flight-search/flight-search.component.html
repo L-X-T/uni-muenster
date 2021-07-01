@@ -4,7 +4,7 @@
   </div>
 
   <div class="content">
-    <form #form="ngForm" [roundTrip]="['from', 'to']">
+    <form #form="ngForm" [roundTrip]="['from', 'to']" [asyncFlight]="['from', 'to']">
       <div class="form-group">
         <label>From:</label>
         <input [(ngModel)]="from"
@@ -53,6 +53,10 @@
 
       <div class="text-danger" *ngIf="form?.hasError('roundTrip')">
         Round trips are not allowed.<br/><br/>
+      </div>
+
+      <div class="text-danger" *ngIf="form?.hasError('asyncFlight')">
+        No flights found.<br/><br/>
       </div>
 
       <div class="form-group">
