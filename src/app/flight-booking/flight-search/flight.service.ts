@@ -20,6 +20,7 @@ export class FlightService {
   }
 
   save(flight: Flight): Observable<Flight> {
+    console.log(flight);
     let url = 'http://www.angular.at/api/flight';
 
     let headers = new HttpHeaders().set('Accept', 'application/json');

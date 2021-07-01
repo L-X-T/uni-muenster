@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Flight } from '../../entities/flight';
 import { FlightService } from './flight.service';
 import { validCities } from '../../shared/validation/city-validator.directive';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'flight-search',
@@ -41,10 +42,29 @@ export class FlightSearchComponent {
     this.selectedFlight = f;
   }
 
-  save(): void {
-    this.flightService.save(this.selectedFlight).subscribe({
+  save(flight: Flight): void {
+    if (flight.id <= 5) {
+      console.error('Error', 'We cannot update this flight!');
+
+      this.message = 'Error!';
+    }
+
+    this.flightService.save(flight ? flight : this.selectedFlight).subscribe({
       next: (flight) => {
         this.selectedFlight = flight;
+
+        const flightToReplace = this.flights.find((aFlight) => aFlight.id === flight.id);
+        if (flightToReplace) {
+          flightToReplace.from = flight.from;
+          flightToReplace.to = flight.to;
+          flightToReplace.date = flight.date;
+          flightToReplace.delayed = flight.delayed;
+
+          if (environment.debug) {
+            console.log('flight saved successfully!');
+          }
+        }
+
         this.message = 'Success!';
       },
       error: (errResponse) => {
