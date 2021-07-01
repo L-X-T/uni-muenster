@@ -311,7 +311,6 @@ Sie können sich dabei am folgenden Ablauf orientieren:
 
     Mappen Sie das erhaltene Ergebnis mit der Methode ``map`` des Observables auf ein leeres Fehlerbeschreibungsobjekt, wenn Flüge gefunden wurden. Ansonsten mappen Sie es auf ein Objekt, dass den Fehler ``asyncCity`` anzeigt. Liefern Sie das von ``map`` erhaltene Observable zurück.
 
-
     <details>
     <summary>Code anzeigen</summary>
     <p>
