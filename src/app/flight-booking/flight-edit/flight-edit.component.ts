@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Flight } from '../../entities/flight';
 import { validateCity } from '../../shared/validation/city-validator';
@@ -11,7 +12,7 @@ import { validateRoundTrip } from '../../shared/validation/form-round-trip';
   templateUrl: './flight-edit.component.html',
   styleUrls: ['./flight-edit.component.css']
 })
-export class FlightEditComponent implements OnChanges, OnInit {
+export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   @Input() flight: Flight;
 
   @Output() saved: EventEmitter<Flight> = new EventEmitter<Flight>();
@@ -41,6 +42,8 @@ export class FlightEditComponent implements OnChanges, OnInit {
     }
   ];
 
+  private valueChangesSubscription: Subscription;
+
   constructor(private formBuilder: FormBuilder) {}
 
   ngOnChanges(): void {
@@ -55,11 +58,11 @@ export class FlightEditComponent implements OnChanges, OnInit {
     }
 
     this.editForm.validator = validateRoundTrip;
+  }
 
-    if (environment.debug) {
-      this.editForm.valueChanges.subscribe((value) => {
-        console.debug('changes: ', value);
-      });
+  ngOnDestroy(): void {
+    if (this.valueChangesSubscription) {
+      this.valueChangesSubscription.unsubscribe();
     }
   }
 
@@ -73,6 +76,16 @@ export class FlightEditComponent implements OnChanges, OnInit {
     this.editForm = this.formBuilder.group({});
     for (let control of this.controls) {
       this.editForm.addControl(control.field, new FormControl(this.flight[control.field], control.validators));
+    }
+
+    if (environment.debug) {
+      if (this.valueChangesSubscription) {
+        this.valueChangesSubscription.unsubscribe();
+      }
+
+      this.valueChangesSubscription = this.editForm.valueChanges.subscribe((value) => {
+        console.debug('changes: ', value);
+      });
     }
 
     this.isEditFormInitialized = true;
