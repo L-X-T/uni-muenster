@@ -14,7 +14,7 @@
                minlength="3"
                maxlength="15"
                pattern="[a-zA-Z ]*"
-               city>
+               [city]="validCities">
 
         <!--<pre>{{form?.controls['from']?.errors | json}}</pre>-->
 
@@ -31,7 +31,7 @@
                minlength="3"
                maxlength="15"
                pattern="[a-zA-Z ]*"
-               city>
+               [city]="validCities">
 
         <!--<pre *ngIf="to">{{form?.controls['to']?.errors | json}}</pre>-->
 

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { Flight } from '../../entities/flight';
 import { FlightService } from './flight.service';
+import { validCities } from '../../shared/validation/city-validator.directive';
 
 @Component({
   selector: 'flight-search',
@@ -20,6 +21,8 @@ export class FlightSearchComponent {
     '3': true,
     '5': true
   };
+
+  validCities = validCities;
 
   constructor(private flightService: FlightService) {}
 
