@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { FlightService } from '../flight-search/flight.service';
 import { Flight } from '../../entities/flight';
 import { validateCity } from '../../shared/validation/city-validator';
+import { validCities } from '../../shared/validation/city-validator.directive';
 
 @Component({
   selector: 'flight-edit',
@@ -22,8 +23,8 @@ export class FlightEditComponent implements OnChanges {
   ngOnChanges(): void {
     this.editForm = this.formBuilder.group({
       id: [this.flight.id],
-      from: [this.flight.from, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity]],
-      to: [this.flight.to, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity]],
+      from: [this.flight.from, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity(validCities)]],
+      to: [this.flight.to, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity(validCities)]],
       date: [this.flight.date, [Validators.required, Validators.minLength(21), Validators.maxLength(35)]]
     });
 
