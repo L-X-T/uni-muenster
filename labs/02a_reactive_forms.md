@@ -20,7 +20,6 @@ In dieser Übung erstellen Sie ein reaktives Formular zum Bearbeiten von Flügen
     <details>
     <summary>Code anzeigen</summary>
     <p>
-    
 
     ```typescript
     [...]
