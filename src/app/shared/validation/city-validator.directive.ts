@@ -1,7 +1,7 @@
 import { Directive, Input } from '@angular/core';
 import { AbstractControl, NG_VALIDATORS, ValidationErrors, Validator } from '@angular/forms';
 
-export const validCities = ['Hamburg', 'Graz', 'Wien', 'Berlin'];
+export const validCities = ['Hamburg', 'Graz', 'Wien', 'Berlin', 'Innsbruck', 'Rom'];
 
 @Directive({
   selector: '[city]',

@@ -14,9 +14,14 @@
                minlength="3"
                maxlength="15"
                pattern="[a-zA-Z ]*"
-               [city]="validCities">
+               [city]="validCities"
+               [asyncCity]="'from'">
 
         <!--<pre>{{form?.controls['from']?.errors | json}}</pre>-->
+
+        <div *ngIf="form?.controls['from']?.pending">
+          ... Executing Async Validator ...
+        </div>
 
         <flight-validation-errors *ngIf="!form?.controls['from']?.untouched"
                                   [errors]="form?.controls['from']?.errors">
@@ -31,9 +36,14 @@
                minlength="3"
                maxlength="15"
                pattern="[a-zA-Z ]*"
-               [city]="validCities">
+               [city]="validCities"
+               [asyncCity]="'to'">
 
         <!--<pre *ngIf="to">{{form?.controls['to']?.errors | json}}</pre>-->
+
+        <div *ngIf="form?.controls['to']?.pending">
+          ... Executing Async Validator ...
+        </div>
 
         <flight-validation-errors *ngIf="!form?.controls['to']?.untouched"
                                   [errors]="form?.controls['to']?.errors">
