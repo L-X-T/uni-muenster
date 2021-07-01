@@ -4,7 +4,7 @@
   </div>
 
   <div class="content">
-    <form #form="ngForm">
+    <form #form="ngForm" [roundTrip]="['from', 'to']">
       <div class="form-group">
         <label>From:</label>
         <input [(ngModel)]="from"
@@ -15,7 +15,7 @@
                maxlength="15"
                pattern="[a-zA-Z ]*"
                [city]="validCities"
-               [asyncCity]="'from'">
+               asyncCity="from">
 
         <!--<pre>{{form?.controls['from']?.errors | json}}</pre>-->
 
@@ -27,6 +27,7 @@
                                   [errors]="form?.controls['from']?.errors">
         </flight-validation-errors>
       </div>
+
       <div class="form-group">
         <label>To:</label>
         <input [(ngModel)]="to"
@@ -37,7 +38,7 @@
                maxlength="15"
                pattern="[a-zA-Z ]*"
                [city]="validCities"
-               [asyncCity]="'to'">
+               asyncCity="to">
 
         <!--<pre *ngIf="to">{{form?.controls['to']?.errors | json}}</pre>-->
 
@@ -50,8 +51,12 @@
         </flight-validation-errors>
       </div>
 
+      <div class="text-danger" *ngIf="form?.hasError('roundTrip')">
+        Round trips are not allowed.<br/><br/>
+      </div>
+
       <div class="form-group">
-        <button [disabled]="!to || !from" (click)="search()" class="btn btn-default">
+        <button [disabled]="!to || !from || form.invalid" (click)="search()" class="btn btn-default">
           Search
         </button>
       </div>
