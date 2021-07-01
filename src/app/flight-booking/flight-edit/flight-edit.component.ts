@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { FlightService } from '../flight-search/flight.service';
 import { Flight } from '../../entities/flight';
-import { from } from 'rxjs';
+import { validateCity } from '../../shared/validation/city-validator';
 
 @Component({
   selector: 'flight-edit',
@@ -22,8 +22,8 @@ export class FlightEditComponent implements OnChanges {
   ngOnChanges(): void {
     this.editForm = this.formBuilder.group({
       id: [this.flight.id],
-      from: [this.flight.from, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
-      to: [this.flight.to, [Validators.required, Validators.minLength(3), Validators.maxLength(15)]],
+      from: [this.flight.from, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity]],
+      to: [this.flight.to, [Validators.required, Validators.minLength(3), Validators.maxLength(15), validateCity]],
       date: [this.flight.date, [Validators.required, Validators.minLength(21), Validators.maxLength(35)]]
     });
 
