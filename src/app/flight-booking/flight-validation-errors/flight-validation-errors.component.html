@@ -1,0 +1,15 @@
+<div *ngIf="errors && errors['required']">
+  This field is required.
+</div>
+
+<div *ngIf="errors && errors['minlength']">
+  This field is too short.
+</div>
+
+<div *ngIf="errors && errors['maxlength']">
+  This field is too long.
+</div>
+
+<div *ngIf="errors && errors['pattern']">
+  This input is invalid.
+</div>
