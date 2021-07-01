@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Component } from '@angular/core';
 
 import { Flight } from '../../entities/flight';
 import { FlightService } from './flight.service';
@@ -9,7 +8,7 @@ import { FlightService } from './flight.service';
   templateUrl: './flight-search.component.html',
   styleUrls: ['./flight-search.component.css']
 })
-export class FlightSearchComponent implements OnInit {
+export class FlightSearchComponent {
   from: string;
   to: string;
   flights: Flight[] = [];
@@ -23,8 +22,6 @@ export class FlightSearchComponent implements OnInit {
   };
 
   constructor(private flightService: FlightService) {}
-
-  ngOnInit() {}
 
   search(): void {
     this.flightService.find(this.from, this.to).subscribe({
