@@ -7,24 +7,27 @@ import { Flight } from '../../entities/flight';
 
 @Injectable({ providedIn: 'root' })
 export class FlightService {
+  apiUrl = 'http://www.angular.at/api/flight';
+
   constructor(private http: HttpClient) {}
 
   find(from: string, to: string): Observable<Flight[]> {
-    let url = 'http://www.angular.at/api/flight';
+    const headers = new HttpHeaders().set('Accept', 'application/json');
+    const params = new HttpParams().set('from', from).set('to', to);
 
-    let headers = new HttpHeaders().set('Accept', 'application/json');
+    return this.http.get<Flight[]>(this.apiUrl, { headers, params });
+  }
 
-    let params = new HttpParams().set('from', from).set('to', to);
+  findById(id: number | string): Observable<Flight> {
+    const headers = new HttpHeaders().set('Accept', 'application/json');
+    const params = new HttpParams().set('id', '' + id);
 
-    return this.http.get<Flight[]>(url, { headers, params });
+    return this.http.get<Flight>(this.apiUrl, { headers, params });
   }
 
   save(flight: Flight): Observable<Flight> {
-    console.log(flight);
-    let url = 'http://www.angular.at/api/flight';
+    const headers = new HttpHeaders().set('Accept', 'application/json');
 
-    let headers = new HttpHeaders().set('Accept', 'application/json');
-
-    return this.http.post<Flight>(url, flight, { headers });
+    return this.http.post<Flight>(this.apiUrl, flight, { headers });
   }
 }

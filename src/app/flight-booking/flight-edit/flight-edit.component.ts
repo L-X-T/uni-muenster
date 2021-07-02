@@ -7,6 +7,7 @@ import { Flight } from '../../entities/flight';
 import { validateCity } from '../../shared/validation/city-validator';
 import { validCities } from '../../shared/validation/city-validator.directive';
 import { validateRoundTrip } from '../../shared/validation/form-round-trip';
+import { FlightService } from '../flight-search/flight.service';
 
 @Component({
   selector: 'flight-edit',
@@ -20,6 +21,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
 
   id: string;
   showDetails: string;
+  message: string;
 
   editForm: FormGroup;
   isEditFormInitialized = false;
@@ -48,7 +50,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
 
   private valueChangesSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private formBuilder: FormBuilder) {}
+  constructor(private route: ActivatedRoute, private flightService: FlightService, private formBuilder: FormBuilder) {}
 
   ngOnChanges(): void {
     this.initForm();
@@ -60,6 +62,17 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
     this.route.params.subscribe((params: Params) => {
       this.id = params['id'];
       this.showDetails = params['showDetails'];
+
+      this.flightService.findById(this.id).subscribe(
+        (flight) => {
+          this.flight = flight;
+          this.message = 'Loading was successful.';
+          this.initForm();
+        },
+        (err) => {
+          this.message = 'Error loading data!';
+        }
+      );
     });
 
     if (!this.isEditFormInitialized) {
@@ -77,6 +90,20 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
 
   save(): void {
     this.logEditForm();
+
+    const flightToSave: Flight = this.editForm.value; // same as: const flightToSave = this.editForm.value as Flight;
+
+    this.flightService.save(flightToSave).subscribe(
+      (flight) => {
+        console.warn('[save] saved flight:');
+        console.log(flight);
+        this.flight = flight;
+        this.message = 'Saving was successful.';
+      },
+      (err) => {
+        this.message = 'Error saving data!';
+      }
+    );
 
     this.saved.emit(this.editForm.value);
   }

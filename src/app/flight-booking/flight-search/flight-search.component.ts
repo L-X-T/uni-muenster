@@ -42,7 +42,7 @@ export class FlightSearchComponent {
     this.selectedFlight = f;
   }
 
-  save(flight: Flight): void {
+  /*save(flight: Flight): void {
     if (flight.id <= 5) {
       console.error('Error', 'We cannot update this flight!');
 
@@ -72,5 +72,5 @@ export class FlightSearchComponent {
         this.message = 'Error!';
       }
     });
-  }
+  }*/
 }

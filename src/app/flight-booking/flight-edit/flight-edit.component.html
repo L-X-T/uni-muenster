@@ -6,14 +6,14 @@
   <div class="content">
     <p>Id: {{id}}</p>
     <p>ShowDetails: {{showDetails}}</p>
+    <p *ngIf="message">Message: {{message}}</p>
 
     <form *ngIf="flight" [formGroup]="editForm">
       <ng-container *ngFor="let control of controls">
         <div class="form-group">
           <label>{{ control.label }}:</label>
           <input class="form-control"
-                 [formControlName]="control.field"
-                 [readonly]="control.field === 'id' ? 'readonly' : null">
+                 [formControlName]="control.field">
         </div>
 
         <flight-validation-errors *ngIf="!editForm?.controls[control.field]?.untouched"
