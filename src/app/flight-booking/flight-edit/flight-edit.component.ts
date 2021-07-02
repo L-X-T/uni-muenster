@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
+
 import { Subscription } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
 import { Flight } from '../../entities/flight';
 import { validateCity } from '../../shared/validation/city-validator';
@@ -50,7 +53,12 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
 
   private valueChangesSubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private flightService: FlightService, private formBuilder: FormBuilder) {}
+  constructor(
+    private route: ActivatedRoute,
+    private flightService: FlightService,
+    private formBuilder: FormBuilder,
+    private location: Location
+  ) {}
 
   ngOnChanges(): void {
     this.initForm();
@@ -99,6 +107,8 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
         console.log(flight);
         this.flight = flight;
         this.message = 'Saving was successful.';
+
+        setTimeout(() => this.location.back(), 1000);
       },
       (err) => {
         this.message = 'Error saving data!';
