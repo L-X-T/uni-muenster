@@ -73,4 +73,21 @@ export class FlightSearchComponent {
       }
     });
   }*/
+
+  delayFirstFlight(): void {
+    const ONE_MINUTE = 1000 * 60;
+
+    const oldFlights = this.flights;
+    const oldFlight = oldFlights[0];
+    const oldDate = new Date(oldFlight.date);
+
+    // Mutable
+    oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
+    oldFlight.date = oldDate.toISOString();
+
+    // Immutable
+    // const newDate = new Date(oldDate.getTime() + 15 * ONE_MINUTE);
+    // const newFlight: Flight = { ...oldFlight, date: newDate.toISOString() };
+    // this.flights = [ newFlight, ...oldFlights.slice(1) ];
+  }
 }
