@@ -1,1 +1,9 @@
-<p>home works!</p>
+<h2 *ngIf="userName">Welcome, {{userName}}!</h2>
+<h2 *ngIf="!userName">Welcome!</h2>
+
+<div class="card">
+  <div class="content">
+    <button class="btn btn-default" (click)="login()">Login</button>
+    <button class="btn btn-default" (click)="logout()">Logout</button>
+  </div>
+</div>

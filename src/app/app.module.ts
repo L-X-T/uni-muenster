@@ -4,6 +4,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PreloadAllModules, RouterModule } from '@angular/router';
 
+import { OAuthModule } from 'angular-oauth2-oidc';
+
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -21,7 +23,8 @@ import { APP_ROUTES } from './app.routes';
       // useHash: true
       // enableTracing: true,
       preloadingStrategy: PreloadAllModules
-    })
+    }),
+    OAuthModule.forRoot()
   ],
   declarations: [AppComponent, SidebarComponent, NavbarComponent, HomeComponent],
   providers: [],

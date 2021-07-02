@@ -5,7 +5,7 @@ describe('holidays e2e test', () => {
 
   it('should do an implicit subject assertion', () => {
     cy.visit('');
-    cy.get('h1').should('have.text', 'Hello World!');
+    cy.get('h1').should('have.text', 'My Angular App :-)');
   });
 
   it('should do an explicit subject assertion', () => {
