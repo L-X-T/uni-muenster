@@ -14,7 +14,16 @@ import { HomeComponent } from './home/home.component';
 import { APP_ROUTES } from './app.routes';
 
 @NgModule({
-  imports: [BrowserModule, HttpClientModule, FormsModule, FlightBookingModule, RouterModule.forRoot(APP_ROUTES)],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    FormsModule,
+    FlightBookingModule,
+    RouterModule.forRoot(APP_ROUTES, {
+      // useHash: true
+      enableTracing: true
+    })
+  ],
   declarations: [AppComponent, SidebarComponent, NavbarComponent, HomeComponent],
   providers: [],
   bootstrap: [AppComponent]
