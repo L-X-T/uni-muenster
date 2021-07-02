@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Flight } from '../../entities/flight';
 
@@ -10,7 +11,7 @@ import { Flight } from '../../entities/flight';
 export class FlightCardComponent implements OnInit, OnChanges {
   debug = false;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   @Input() item: Flight;
   @Input() selected: boolean;
@@ -40,5 +41,9 @@ export class FlightCardComponent implements OnInit, OnChanges {
   deselect(): void {
     this.selected = false;
     this.selectedChange.next(this.selected);
+  }
+
+  onEdit(flightId: number): void {
+    this.router.navigate(['/flight-edit', flightId, { showDetails: true }]);
   }
 }

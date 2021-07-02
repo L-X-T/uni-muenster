@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Flight } from '../../entities/flight';
@@ -16,6 +17,9 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   @Input() flight: Flight;
 
   @Output() saved: EventEmitter<Flight> = new EventEmitter<Flight>();
+
+  id: string;
+  showDetails: string;
 
   editForm: FormGroup;
   isEditFormInitialized = false;
@@ -44,7 +48,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
 
   private valueChangesSubscription: Subscription;
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(private route: ActivatedRoute, private formBuilder: FormBuilder) {}
 
   ngOnChanges(): void {
     this.initForm();
@@ -53,6 +57,11 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.route.params.subscribe((params: Params) => {
+      this.id = params['id'];
+      this.showDetails = params['showDetails'];
+    });
+
     if (!this.isEditFormInitialized) {
       this.initForm();
     }
@@ -75,7 +84,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   private initForm(): void {
     this.editForm = this.formBuilder.group({});
     for (let control of this.controls) {
-      this.editForm.addControl(control.field, new FormControl(this.flight[control.field], control.validators));
+      this.editForm.addControl(control.field, new FormControl(this.flight ? this.flight[control.field] : '', control.validators));
     }
 
     if (environment.debug) {

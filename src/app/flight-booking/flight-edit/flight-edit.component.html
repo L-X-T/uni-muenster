@@ -1,10 +1,13 @@
 <div class="card">
   <div class="header">
-    <h2 class="title">Flight Edit Form</h2>
+    <h1 class="title">Flight Edit</h1>
   </div>
 
   <div class="content">
-    <form [formGroup]="editForm">
+    <p>Id: {{id}}</p>
+    <p>ShowDetails: {{showDetails}}</p>
+
+    <form *ngIf="flight" [formGroup]="editForm">
       <ng-container *ngFor="let control of controls">
         <div class="form-group">
           <label>{{ control.label }}:</label>
