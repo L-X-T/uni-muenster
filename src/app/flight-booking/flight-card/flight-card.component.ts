@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Flight } from '../../entities/flight';
 
@@ -11,7 +11,7 @@ import { Flight } from '../../entities/flight';
 export class FlightCardComponent implements OnInit, OnChanges {
   debug = false;
 
-  constructor(private router: Router) {}
+  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
 
   @Input() item: Flight;
   @Input() selected: boolean;
@@ -44,6 +44,6 @@ export class FlightCardComponent implements OnInit, OnChanges {
   }
 
   onEdit(flightId: number): void {
-    this.router.navigate(['/flight-edit', flightId, { showDetails: true }]);
+    this.router.navigate(['flight-edit', flightId, { showDetails: true }], { relativeTo: this.activatedRoute.parent });
   }
 }

@@ -14,7 +14,7 @@
       <flight-status-toggle style="margin-left: 10px" [(status)]="item.delayed"></flight-status-toggle>
     </p>
     <p>
-      <a class="btn btn-default" [routerLink]="['/flight-edit', item.id, { showDetails: true }]">Edit</a>
+      <a class="btn btn-default" [routerLink]="['../flight-edit', item.id, { showDetails: true }]">Edit</a>
       <!--<a class="btn btn-default" (click)="onEdit(item.id)">Edit</a>-->
     </p>
   </div>
