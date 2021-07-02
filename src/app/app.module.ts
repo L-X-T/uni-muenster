@@ -2,7 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { PreloadAllModules, RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -19,7 +19,8 @@ import { APP_ROUTES } from './app.routes';
     // FlightBookingModule,
     RouterModule.forRoot(APP_ROUTES, {
       // useHash: true
-      enableTracing: true
+      // enableTracing: true,
+      preloadingStrategy: PreloadAllModules
     })
   ],
   declarations: [AppComponent, SidebarComponent, NavbarComponent, HomeComponent],
