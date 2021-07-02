@@ -6,8 +6,8 @@ import { Flight } from '../../entities/flight';
 @Component({
   selector: 'flight-card',
   templateUrl: './flight-card.component.html',
-  styleUrls: ['./flight-card.component.css']
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./flight-card.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent implements OnInit, OnChanges {
   debug = false;
